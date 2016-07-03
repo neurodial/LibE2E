@@ -3,7 +3,7 @@
 #include <map>
 
 #include "patient.h"
-#include "basestructure.h"
+#include "substructure_template.h"
 
 
 namespace E2E
@@ -17,24 +17,13 @@ namespace E2E
 	*/
 
 
-	class DataRoot : public BaseStructure
+	class DataRoot : public SubstructureTemplate<Patient>
 	{
 	public:
-		typedef std::pair<const int, Patient> PatientsPair;
-		typedef std::map<int, Patient>        PatientsMap;
-		typedef PatientsMap::iterator         PatientsIterator;
-		typedef PatientsMap::const_iterator   PatientsCIterator;
+		      Patient& getPatient(int patientID)                { return getAndInsert(patientID)   ; }
+		const Patient& getPatient(int patientID) const          { return *(substructureMap.at(patientID)); }
 
-		      Patient& getPatient(int patientID)                { return patientsMap[patientID]   ; }
-		const Patient& getPatient(int patientID) const          { return patientsMap.at(patientID); }
-
-		std::size_t getPatientsSize() const                     { return patientsMap.size(); }
-
-		PatientsCIterator begin() const                         { return patientsMap.begin(); }
-		PatientsCIterator end()   const                         { return patientsMap.end(); }
-
-	private:
-		PatientsMap patientsMap;
+		std::size_t getPatientsSize() const                     { return substructureMap.size(); }
 	};
 
 }

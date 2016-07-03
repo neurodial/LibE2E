@@ -1,4 +1,4 @@
-#include "bscann.h"
+#include "bscan.h"
 
 
 #include "../dataelements/image.h"

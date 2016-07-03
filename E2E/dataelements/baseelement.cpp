@@ -8,14 +8,14 @@ namespace E2E
 	E2E::BaseElement::BaseElement(std::istream& stream, E2E::MDbData& data)
 	{
 		std::size_t pos    = stream.tellg();
-		std::size_t readLengt  = data.getDataLength() + 65; // TODO
-		std::size_t readAdress = data.getDataAdress();
+		std::size_t readLengt  = data.getDataLength(); // TODO
+		std::size_t readAdress = data.getDataAdress() + 60;
 
 		rawData = new char[readLengt];
 
 		stream.seekg(readAdress);
 		stream.read(rawData, readLengt);
-		rawDataLength = data.getDataLength(); // readLengt;
+		rawDataLength = readLengt; // data.getDataLength(); //
 
 		stream.seekg(pos);
 	}

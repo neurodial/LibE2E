@@ -215,7 +215,7 @@ namespace E2E
 				e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).getCScan(getScannId()).takeRawElement(baseElement);
 				break;
 			case DataClass::Image:
-				delete baseElement;
+				e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).getCScan(getScannId()).getBScan(getImageId()).takeRawElement(baseElement);
 				break;
 		}
 	}
