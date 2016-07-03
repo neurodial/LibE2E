@@ -30,8 +30,8 @@ namespace E2E
 
 		std::size_t getPatientsSize() const                     { return patientsMap.size(); }
 
-		PatientsCIterator begin() const { return patientsMap.begin(); }
-		PatientsCIterator end()   const { return patientsMap.end(); }
+		PatientsCIterator begin() const                         { return patientsMap.begin(); }
+		PatientsCIterator end()   const                         { return patientsMap.end(); }
 
 	private:
 		PatientsMap patientsMap;

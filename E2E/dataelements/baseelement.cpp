@@ -15,6 +15,7 @@ namespace E2E
 
 		stream.seekg(readAdress);
 		stream.read(rawData, readLengt);
+		rawDataLength = data.getDataLength(); // readLengt;
 
 		stream.seekg(pos);
 	}

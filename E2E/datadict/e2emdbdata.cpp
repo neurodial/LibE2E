@@ -29,8 +29,8 @@ namespace
 		// uint8_t  dataBlock[0x16];
 		uint32_t  zero       ; // TODO: unknown
 		int32_t   patient    ; // dir + edb
-		int32_t   imageScanID; // .edb
-		int32_t   imageDirID ; // .sdb
+		int32_t   series     ; // .edb
+		int32_t   scann      ; // .sdb
 		int32_t   imageID    ;
 		int16_t   imageSubID ;
 
@@ -46,9 +46,9 @@ E2E::MDbData::DataClass E2E::MDbData::getDataClass() const
 	MDbDataRawData& data = *(getMDbDataRawData(rawData));
 	if(data.imageID != -1)
 		return DataClass::Image;
-	if(data.imageDirID != -1)
+	if(data.scann != -1)
 		return DataClass::Scann;
-	if(data.imageScanID != -1)
+	if(data.series != -1)
 		return DataClass::Series;
 	if(data.patient != -1)
 		return DataClass::Patient;
@@ -84,8 +84,8 @@ namespace E2E
 		    && mdbDirEntry.data.dataLengt    == data.dataLengt
 		    && mdbDirEntry.data.zero         == data.zero
 		    && mdbDirEntry.data.patient      == data.patient
-		    && mdbDirEntry.data.imageScanID  == data.imageScanID
-		    && mdbDirEntry.data.imageDirID   == data.imageDirID
+		    && mdbDirEntry.data.imageScanID  == data.series
+		    && mdbDirEntry.data.imageDirID   == data.scann
 		    && mdbDirEntry.data.imageID      == data.imageID
 		    && mdbDirEntry.data.imageSubID   == data.imageSubID ;
 	}
@@ -209,12 +209,12 @@ namespace E2E
 				e2edata.getPatient(getPatientId()).takeRawElement(baseElement);
 				break;
 			case DataClass::Series:
-				delete baseElement;
-				break;
-			case DataClass::Image:
-				delete baseElement;
+				e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).takeRawElement(baseElement);
 				break;
 			case DataClass::Scann:
+				e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).getCScan(getScannId()).takeRawElement(baseElement);
+				break;
+			case DataClass::Image:
 				delete baseElement;
 				break;
 		}
@@ -233,12 +233,12 @@ namespace E2E
 
 	int MDbData::getScannId() const
 	{
-		return getMDbDataRawData(rawData)->imageScanID;
+		return getMDbDataRawData(rawData)->scann;
 	}
 
 	int MDbData::getSeriesId() const
 	{
-		return getMDbDataRawData(rawData)->imageDirID;
+		return getMDbDataRawData(rawData)->series;
 	}
 
 	int MDbData::getPatientId() const
