@@ -12,6 +12,7 @@ namespace E2E
 	struct BScan : public BaseStructure
 	{
 		Image* bscanImage = nullptr;
+		std::vector<Image*> pixmaps;
 		
 		// std::vector<Segmentierungsdaten>
 
@@ -19,7 +20,10 @@ namespace E2E
 		~BScan();
 
 		const Image* getImage() const                           { return bscanImage; }
-		void setImage(Image* image);
+		void takeImage(Image* image);
+
+		const std::vector<Image*>& getPixmaps() const           { return pixmaps; }
+		void takePixmap(Image* img)                             { pixmaps.push_back(img); }
 	};
 
 

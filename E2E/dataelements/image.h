@@ -18,9 +18,12 @@ namespace E2E
 
 		void readCVImage(std::istream& stream, cv::Mat& image, int cvFormat);
 
+		Image(cv::Mat* image, std::istream& stream, MDbData& data);
 	public:
 		Image(std::istream& stream, MDbData& data);
 		~Image();
+
+		static Image* fromJFIF(std::istream& stream, MDbData& data);
 
 		const cv::Mat& getImage() const                         { return *image; }
 	};

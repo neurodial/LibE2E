@@ -9,12 +9,11 @@ namespace E2E
 	struct Options
 	{
 		bool readThumbnails = false;
-		bool readRawData    = true;
+		bool readRawData    = false;
 	};
 
 	class E2EData
 	{
-		Options options;
 
 		DataRoot dataRoot;
 
@@ -24,6 +23,8 @@ namespace E2E
 		bool readE2EFile(const std::string& filename);
 
 		const DataRoot& getDataRoot() const                     { return dataRoot; }
+
+		Options options;
 	};
 
 

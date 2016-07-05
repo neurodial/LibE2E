@@ -12,7 +12,9 @@
 
 #include "../streamhelper.h"
 #include "../dataelements/baseelement.h"
+#include "../dataelements/image.h"
 
+#include "../e2edata.h"
 
 namespace
 {
@@ -62,8 +64,9 @@ static_assert(sizeof(MDbDataRawData) == E2E::MDbData::headerSize, "headerSize is
 
 namespace E2E
 {
-	MDbData::MDbData()
+	MDbData::MDbData(const Options& options)
 	: rawData(new MDbDataRawData)
+	, options(options)
 	{
 
 	}
@@ -112,17 +115,55 @@ namespace E2E
 
 		if(isValid(mdbDirEntry))
 		{
-		
+			bool rawData = true;
 			switch(mdbDirEntry.data.undef[2])
 			{
 				case 0x00:
+				{
 					DEBUG_OUT("Bild");
+					Image* image = new Image(stream, *this);
+					rawData = false;
+					switch(getDataClass())
+					{
+						case DataClass::Scann:
+							getCScan(e2edata).takeSloImage(image);
+							break;
+						case DataClass::Image:
+							getBScan(e2edata).takeImage(image);
+							break;
+						default:
+							delete image;
+							rawData = true;
+							std::cerr << "image: unexpected data class";
+					}
+
 					// readImage(stream, cscan, set);
 					// e2edata.getPatient();
 					break;
+				}
 				case 0x02: // Vorschaubild JFIF
+				{
 					DEBUG_OUT("Vorschaubild JFIF");
+					if(options.readThumbnails)
+					{
+						Image* image = Image::fromJFIF(stream, *this);
+						rawData = false;
+						switch(getDataClass())
+						{
+							case DataClass::Scann:
+								getCScan(e2edata).takePixmap(image);
+								break;
+							case DataClass::Image:
+								getBScan(e2edata).takePixmap(image);
+								break;
+							default:
+								delete image;
+								rawData = true;
+								std::cerr << "image: unexpected data class";
+						}
+					}
 					break;
+				}
 				case 0x09: // Patientendaten : Name, ID
 					DEBUG_OUT("Patientendaten : Name, ID");
 					/*PatientData pdata;
@@ -186,7 +227,8 @@ namespace E2E
 					break;
 			}
 
-			addUnknow2Structure(stream, e2edata);
+			if(rawData && options.readRawData)
+				addUnknow2Structure(stream, e2edata);
 
 		}
 		DEBUG_OUT(std::endl)
@@ -212,10 +254,10 @@ namespace E2E
 				e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).takeRawElement(baseElement);
 				break;
 			case DataClass::Scann:
-				e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).getCScan(getScannId()).takeRawElement(baseElement);
+				e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).getCScan(getScanId()).takeRawElement(baseElement);
 				break;
 			case DataClass::Image:
-				e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).getCScan(getScannId()).getBScan(getImageId()).takeRawElement(baseElement);
+				e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).getCScan(getScanId()).getBScan(getImageId()).takeRawElement(baseElement);
 				break;
 		}
 	}
@@ -231,7 +273,7 @@ namespace E2E
 		return getMDbDataRawData(rawData)->imageID;
 	}
 
-	int MDbData::getScannId() const
+	int MDbData::getScanId() const
 	{
 		return getMDbDataRawData(rawData)->scann;
 	}
@@ -257,6 +299,26 @@ namespace E2E
 		return getMDbDataRawData(rawData)->dataLengt;
 	}
 
+
+	BScan& MDbData::getBScan(DataRoot& e2edata)
+	{
+		return e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).getCScan(getScanId()).getBScan(getImageId());
+	}
+
+	CScan& MDbData::getCScan(DataRoot& e2edata)
+	{
+		return e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).getCScan(getScanId());
+	}
+
+	Series& MDbData::getSeries(DataRoot& e2edata)
+	{
+		return e2edata.getPatient(getPatientId()).getSeries(getSeriesId());
+	}
+
+	Patient& MDbData::getPatient(DataRoot& e2edata)
+	{
+		return e2edata.getPatient(getPatientId());
+	}
 
 	
 }

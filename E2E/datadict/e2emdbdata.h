@@ -6,10 +6,13 @@
 namespace E2E
 {
 
+	struct Options;
+
 	class DataRoot;
 	class Patient;
-	class CScann;
+	class CScan;
 	class BScan;
+	class Series;
 
 	class MDbDirEntry;
 
@@ -18,31 +21,33 @@ namespace E2E
 		void*                               rawData = nullptr;
 
 		void addUnknow2Structure(std::ifstream& stream, E2E::DataRoot& e2edata);
+		const Options& options;
 	public:
 		enum class DataClass { General, Patient, Series, Scann, Image  };
 
-		MDbData();
+		MDbData(const E2E::Options& options);
 		~MDbData();
 
 		static const std::size_t headerSize = 50;
 
 		bool isValid(const MDbDirEntry& mdbDirEntry);
 		
-		bool evaluate(std::ifstream& stream, DataRoot& data, const MDbDirEntry& mdbDirEntry);
+		bool evaluate( std::ifstream& stream, E2E::DataRoot& e2edata, const E2E::MDbDirEntry& mdbDirEntry);
 
 		DataClass getDataClass() const;
 		int getImageSubId() const;
 		int getImageId()    const;
-		int getScannId()    const;
+		int getScanId()     const;
 		int getSeriesId()   const;
 		int getPatientId()  const;
 
 
-		DataRoot* getDataRoot();
-		Patient*  getPatient ();
-		CScann*   getCScann  ();
-		BScan*    getBScan   ();
+		Patient&  getPatient(DataRoot& e2edata);
+		Series &  getSeries (DataRoot& e2edata);
+		CScan  &  getCScan  (DataRoot& e2edata);
+		BScan  &  getBScan  (DataRoot& e2edata);
 
+		const Options& getOptions() const                        { return options; }
 
 
 		std::size_t getDataLength() const;

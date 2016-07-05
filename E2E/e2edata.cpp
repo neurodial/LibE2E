@@ -40,7 +40,7 @@ namespace E2E
 
 		for(const MDbDirEntry& dirEntry : vec)
 		{
-			MDbData data;
+			MDbData data(options);
 			data.evaluate(stream, dataRoot, dirEntry);
 		}
 

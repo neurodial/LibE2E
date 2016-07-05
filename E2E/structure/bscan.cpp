@@ -10,7 +10,7 @@ E2E::BScan::~BScan()
 }
 
 
-void E2E::BScan::setImage(E2E::Image* image)
+void E2E::BScan::takeImage(E2E::Image* image)
 {
 	delete bscanImage;
 	bscanImage = image;
