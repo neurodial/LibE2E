@@ -1,5 +1,4 @@
-#ifndef E2E_IMAGE_H
-#define E2E_IMAGE_H
+#pragma once
 
 #include <istream>
 
@@ -30,4 +29,3 @@ namespace E2E
 
 }
 
-#endif // E2E_IMAGE_H

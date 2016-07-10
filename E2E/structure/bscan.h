@@ -7,16 +7,17 @@
 namespace E2E
 {
 
+	class SegmentationData;
 	class Image;
 
 	struct BScan : public BaseStructure
 	{
-		Image* bscanImage = nullptr;
-		std::vector<Image*> pixmaps;
-		
-		// std::vector<Segmentierungsdaten>
-
 	public:
+		typedef std::pair<const int, SegmentationData*>  SegmentationPair;
+		typedef std::map<int, SegmentationData*>         SegmentationMap;
+		typedef typename SegmentationMap::iterator       SubstructureIterator;
+		typedef typename SegmentationMap::const_iterator SubstructureCIterator;
+
 		~BScan();
 
 		const Image* getImage() const                           { return bscanImage; }
@@ -24,6 +25,17 @@ namespace E2E
 
 		const std::vector<Image*>& getPixmaps() const           { return pixmaps; }
 		void takePixmap(Image* img)                             { pixmaps.push_back(img); }
+
+
+		const SegmentationMap& getSegmentationMap() const       { return segmentationMap; }
+		void takeSegmentationData(SegmentationData* data);
+	private:
+		Image* bscanImage = nullptr;
+		std::vector<Image*> pixmaps;
+		
+		SegmentationMap segmentationMap;
+		// std::vector<Segmentierungsdaten>
+
 	};
 
 

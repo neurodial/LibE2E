@@ -71,7 +71,16 @@ namespace E2E
 		image = cv::Mat(head->breite, head->hoehe, cvFormat);
 
 		std::size_t num = head->breite*head->hoehe;
-		stream.read(reinterpret_cast<char*>(image.data), num*image.elemSize());
+		std::size_t pixelBytes = num*image.elemSize();
+		std::size_t bytes = getNumBytes() - sizeof(ImageHeader);
+
+		if(pixelBytes != bytes)
+		{
+			std::cerr << "Image::readCVImage: pixelBytes != bytes\n";
+			pixelBytes = std::min(pixelBytes, bytes);
+		}
+
+		stream.read(reinterpret_cast<char*>(image.data), pixelBytes);
 	}
 
 	Image* Image::fromJFIF(std::istream& stream, MDbData& data)

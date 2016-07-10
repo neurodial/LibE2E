@@ -28,7 +28,7 @@ namespace E2E
 		MDbData(const E2E::Options& options);
 		~MDbData();
 
-		static const std::size_t headerSize = 50;
+		static const std::size_t headerSize = 60;
 
 		bool isValid(const MDbDirEntry& mdbDirEntry);
 		

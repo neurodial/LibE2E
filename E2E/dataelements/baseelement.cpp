@@ -11,7 +11,7 @@ namespace E2E
 		if(data.getOptions().readRawData)
 		{
 			std::size_t pos    = stream.tellg();
-			std::size_t readLengt  = data.getDataLength(); // TODO
+			std::size_t readLengt  = data.getDataLength();// +76; // TODO
 			std::size_t readAdress = data.getDataAdress() + 60;
 
 			rawData = new char[readLengt];
@@ -22,6 +22,10 @@ namespace E2E
 
 			stream.seekg(pos);
 		}
+		// interpret = data.
+
+		address = data.getDataAdress();
+		length  = data.getDataLength();
 	}
 
 	BaseElement::~BaseElement()

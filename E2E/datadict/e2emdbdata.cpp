@@ -13,6 +13,7 @@
 #include "../streamhelper.h"
 #include "../dataelements/baseelement.h"
 #include "../dataelements/image.h"
+#include "../dataelements/segmentationdata.h"
 
 #include "../e2edata.h"
 
@@ -35,6 +36,8 @@ namespace
 		int32_t   scann      ; // .sdb
 		int32_t   imageID    ;
 		int16_t   imageSubID ;
+
+		uint8_t  unknownDataBlock[10];
 
 	} __attribute__((packed));
 
@@ -185,6 +188,14 @@ namespace E2E
 					break;
 				case 0x23: // Segentierungsdaten
 					DEBUG_OUT("Segentierungsdaten");
+					if(getDataClass() == DataClass::Image)
+					{
+						SegmentationData* segData = new SegmentationData(stream, *this);
+						rawData = false;
+						getBScan(e2edata).takeSegmentationData(segData);
+					}
+					else
+						std::cerr << "SegmentationData outsite from a image\n";
 					break;
 				case 0x29:
 					// std::cout << "Gerätename?";
