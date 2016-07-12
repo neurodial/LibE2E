@@ -16,10 +16,11 @@ namespace E2E
 		typedef typename SubstructureMap::iterator       SubstructureIterator;
 		typedef typename SubstructureMap::const_iterator SubstructureCIterator;
 
-		std::size_t subStructureElements() const                { return substructureMap.size(); }
+		std::size_t subStructureElements() const                { return substructureMap.size();  }
 
 		SubstructureCIterator begin() const                     { return substructureMap.begin(); }
-		SubstructureCIterator end()   const                     { return substructureMap.end(); }
+		SubstructureCIterator end()   const                     { return substructureMap.end();   }
+		std::size_t size()            const                     { return substructureMap.size();  }
 
 	protected:
 		virtual ~SubstructureTemplate()

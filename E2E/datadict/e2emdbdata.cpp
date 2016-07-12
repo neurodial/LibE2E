@@ -14,6 +14,7 @@
 #include "../dataelements/baseelement.h"
 #include "../dataelements/image.h"
 #include "../dataelements/segmentationdata.h"
+#include "../dataelements/stringlistelement.h"
 
 #include "../e2edata.h"
 
@@ -31,13 +32,16 @@ namespace
 
 		// uint8_t  dataBlock[0x16];
 		uint32_t  zero       ; // TODO: unknown
-		int32_t   patient    ; // dir + edb
-		int32_t   series     ; // .edb
-		int32_t   scann      ; // .sdb
+		int32_t   patientID  ; // dir + edb
+		int32_t   seriesID   ; // .edb
+		int32_t   scanID     ; // .sdb
 		int32_t   imageID    ;
 		int16_t   imageSubID ;
 
-		uint8_t  unknownDataBlock[10];
+		// uint8_t  unknownDataBlock[10];
+		uint16_t unknown     ; // not included in checksum, unknown why
+		uint32_t type        ;
+		uint32_t checksum    ; // sum of block + 0x789ABCDF
 
 	} __attribute__((packed));
 
@@ -51,11 +55,11 @@ E2E::MDbData::DataClass E2E::MDbData::getDataClass() const
 	MDbDataRawData& data = *(getMDbDataRawData(rawData));
 	if(data.imageID != -1)
 		return DataClass::Image;
-	if(data.scann != -1)
+	if(data.scanID != -1)
 		return DataClass::Scann;
-	if(data.series != -1)
+	if(data.seriesID != -1)
 		return DataClass::Series;
-	if(data.patient != -1)
+	if(data.patientID != -1)
 		return DataClass::Patient;
 	return DataClass::General;
 
@@ -89,11 +93,15 @@ namespace E2E
 		    && mdbDirEntry.data.dataAddress  == data.dataAddress
 		    && mdbDirEntry.data.dataLengt    == data.dataLengt
 		    && mdbDirEntry.data.zero         == data.zero
-		    && mdbDirEntry.data.patient      == data.patient
-		    && mdbDirEntry.data.imageScanID  == data.series
-		    && mdbDirEntry.data.imageDirID   == data.scann
+		    && mdbDirEntry.data.patientID    == data.patientID
+		    && mdbDirEntry.data.seriesID     == data.seriesID
+		    && mdbDirEntry.data.scanID       == data.scanID
 		    && mdbDirEntry.data.imageID      == data.imageID
-		    && mdbDirEntry.data.imageSubID   == data.imageSubID ;
+		    && mdbDirEntry.data.imageSubID   == data.imageSubID
+
+	//	    && mdbDirEntry.data.unknown      == data.unknown;
+		    && mdbDirEntry.data.type         == data.type;
+	//	    && mdbDirEntry.data.checksum     == data.checksum
 	}
 
 	
@@ -108,18 +116,29 @@ namespace E2E
 		StreamHelper::readFStream(stream, &(data));
 
 		DEBUG_OUT(isValid(mdbDirEntry) << "\t" << std::hex << mdbDirEntry.data.indexAddress << "\t" << mdbDirEntry.data.dataAddress << "\t" << mdbDirEntry.data.dataLengt << "\t" << " (" << std::dec << mdbDirEntry.data.dataLengt << ")")
-		DEBUG_OUT( '\t' << mdbDirEntry.data.zero << '\t' << mdbDirEntry.data.patient << '\t' << mdbDirEntry.data.imageScanID << '\t' << mdbDirEntry.data.imageDirID << '\t' << mdbDirEntry.data.imageID << '\t' << mdbDirEntry.data.imageSubID << '\t')
-		for(std::size_t i=0; i<sizeof(MDbDirEntry::RawData::undef); ++i)
-			DEBUG_OUT( std::hex << std::setw(2) << (static_cast<unsigned>(mdbDirEntry.data.undef[i]) & 0xFF) << ' ')
+		DEBUG_OUT( '\t' << mdbDirEntry.data.zero << '\t' << mdbDirEntry.data.patientID << '\t' << mdbDirEntry.data.seriesID << '\t' << mdbDirEntry.data.scanID << '\t' << mdbDirEntry.data.imageID << '\t' << mdbDirEntry.data.imageSubID << '\t')
+		// DEBUG_OUT(mdbDirEntry.data.unknown << '\t' << mdbDirEntry.data.type << '\t')
+			
+
+
+		DEBUG_OUT('(' << mdbDirEntry.data.unknown << " - " << data.unknown << ")\t")
+		DEBUG_OUT(std::hex << mdbDirEntry.data.type << '\t')
+		// DEBUG_OUT('(' << mdbDirEntry.data.checksum << " - " << data.checksum << " = "  << (mdbDirEntry.data.checksum - data.checksum) << ")\t")
+
+
+		DEBUG_OUT("[ " /* << mdbDirEntry.calculatedChecksum << '\t' */ << std::dec << (mdbDirEntry.getCalculatedChecksum() - mdbDirEntry.data.checksum - 0x789ABCDF) << " ]\t");
 
 
 		DEBUG_OUT( static_cast<int>(getDataClass()) << ' ')
 		//std::cout << "Lese " << std::hex << set.data.dataAddress;
+/*
+		for(std::size_t i=0; i<sizeof(MDbDataRawData::unknownDataBlock); ++i)
+			DEBUG_OUT( std::hex << std::setw(2) << (static_cast<unsigned>(data.unknownDataBlock[i]) & 0xFF) << ' ')*/
 
 		if(isValid(mdbDirEntry))
 		{
 			bool rawData = true;
-			switch(mdbDirEntry.data.undef[2])
+			switch(mdbDirEntry.data.type & 0xff)
 			{
 				case 0x00:
 				{
@@ -162,7 +181,7 @@ namespace E2E
 							default:
 								delete image;
 								rawData = true;
-								std::cerr << "image: unexpected data class";
+								std::cerr << "jfif image: unexpected data class";
 						}
 					}
 					break;
@@ -200,22 +219,32 @@ namespace E2E
 				case 0x29:
 					// std::cout << "Gerätename?";
 					DEBUG_OUT("Gerätename");
+					addUnknowStringList2Structure(stream, e2edata);
+					rawData = false;
 					break;
 				case 0x2d:
 					// std::cout << "Retina?";
 					DEBUG_OUT("Retina");
+					addUnknowStringList2Structure(stream, e2edata);
+					rawData = false;
 					break;
 				case 0x2e:
 					// std::cout << "OCT ART Volume?";
 					DEBUG_OUT("OCT ART Volume");
+					addUnknowStringList2Structure(stream, e2edata);
+					rawData = false;
 					break;
 				case 0x2f:
 					// std::cout << "Infra-Red     IR?";
 					DEBUG_OUT("Infra-Red     IR?");
+					addUnknowStringList2Structure(stream, e2edata);
+					rawData = false;
 					break;
 				case 0x30:
 					// std::cout << "OCT?";
 					DEBUG_OUT("OCT");
+					addUnknowStringList2Structure(stream, e2edata);
+					rawData = false;
 					break;
 				case 0x3a:
 					// std::cout << "ua. Operatorname?";
@@ -259,18 +288,53 @@ namespace E2E
 				e2edata.takeRawElement(baseElement);
 				break;
 			case DataClass::Patient:
-				e2edata.getPatient(getPatientId()).takeRawElement(baseElement);
+				getPatient(e2edata).takeRawElement(baseElement);
 				break;
 			case DataClass::Series:
-				e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).takeRawElement(baseElement);
+				getSeries(e2edata).takeRawElement(baseElement);
 				break;
 			case DataClass::Scann:
-				e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).getCScan(getScanId()).takeRawElement(baseElement);
+				getCScan(e2edata).takeRawElement(baseElement);
 				break;
 			case DataClass::Image:
-				e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).getCScan(getScanId()).getBScan(getImageId()).takeRawElement(baseElement);
+				getBScan(e2edata).takeRawElement(baseElement);
 				break;
 		}
+	}
+
+	bool MDbData::addUnknowStringList2Structure(std::ifstream& stream, DataRoot& e2edata)
+	{
+		StringListElement* baseElement = nullptr;
+		try
+		{
+			baseElement = new StringListElement(stream, *this);
+		}
+		catch(...)
+		{
+			MDbData::addUnknow2Structure(stream, e2edata);
+			return false;
+		}
+
+
+		switch(getDataClass())
+		{
+			case DataClass::General:
+				e2edata.takeStringListElement(baseElement);
+				break;
+			case DataClass::Patient:
+				getPatient(e2edata).takeStringListElement(baseElement);
+				break;
+			case DataClass::Series:
+				getSeries(e2edata).takeStringListElement(baseElement);
+				break;
+			case DataClass::Scann:
+				getCScan(e2edata).takeStringListElement(baseElement);
+				break;
+			case DataClass::Image:
+				getBScan(e2edata).takeStringListElement(baseElement);
+				break;
+		}
+		return true;
 	}
 
 
@@ -286,17 +350,17 @@ namespace E2E
 
 	int MDbData::getScanId() const
 	{
-		return getMDbDataRawData(rawData)->scann;
+		return getMDbDataRawData(rawData)->scanID;
 	}
 
 	int MDbData::getSeriesId() const
 	{
-		return getMDbDataRawData(rawData)->series;
+		return getMDbDataRawData(rawData)->seriesID;
 	}
 
 	int MDbData::getPatientId() const
 	{
-		return getMDbDataRawData(rawData)->patient;
+		return getMDbDataRawData(rawData)->patientID;
 	}
 
 	std::size_t MDbData::getDataAdress() const
@@ -329,6 +393,12 @@ namespace E2E
 	Patient& MDbData::getPatient(DataRoot& e2edata)
 	{
 		return e2edata.getPatient(getPatientId());
+	}
+
+
+	int MDbData::getTypeValue() const
+	{
+		return getMDbDataRawData(rawData)->type;
 	}
 
 	

@@ -26,6 +26,7 @@ namespace E2E
 
 		address = data.getDataAdress();
 		length  = data.getDataLength();
+		type    = data.getTypeValue();
 	}
 
 	BaseElement::~BaseElement()

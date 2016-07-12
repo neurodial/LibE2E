@@ -21,6 +21,8 @@ namespace E2E
 		void*                               rawData = nullptr;
 
 		void addUnknow2Structure(std::ifstream& stream, E2E::DataRoot& e2edata);
+		bool addUnknowStringList2Structure(std::ifstream& stream, DataRoot& e2edata);
+
 		const Options& options;
 	public:
 		enum class DataClass { General, Patient, Series, Scann, Image  };
@@ -53,6 +55,7 @@ namespace E2E
 		std::size_t getDataLength() const;
 		std::size_t getDataAdress() const;
 
+		int getTypeValue() const;
 	};
 	
 };

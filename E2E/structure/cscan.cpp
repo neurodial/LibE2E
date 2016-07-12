@@ -1,5 +1,6 @@
 #include "cscan.h"
 
+#include "../dataelements/image.h"
 
 E2E::CScan::CScan()
 {

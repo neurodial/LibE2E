@@ -25,6 +25,10 @@ namespace E2E
 		static Image* fromJFIF(std::istream& stream, MDbData& data);
 
 		const cv::Mat& getImage() const                         { return *image; }
+
+
+		std::size_t getImageCols() const;
+		std::size_t getImageRows() const;
 	};
 
 }

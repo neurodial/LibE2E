@@ -3,15 +3,15 @@
 #include <vector>
 #include <fstream>
 
-#include "../streamhelper.h"
 
 namespace E2E
 {
 	class MDbDirEntry
 	{
 		uint32_t foundAddr;
+		uint32_t calculatedChecksum;
 	public:
-		MDbDirEntry(uint32_t found, std::ifstream& stream) : foundAddr(found) { StreamHelper::readFStream(stream, &(data)); }
+		MDbDirEntry(uint32_t found, std::ifstream& stream);
 
 		struct RawData
 		{
@@ -21,27 +21,24 @@ namespace E2E
 
 			// uint8_t  dataBlock[0x16];
 			uint32_t  zero       ; // TODO: unknown
-			int32_t   patient    ; // dir + edb
-			int32_t   imageScanID; // .edb
-			int32_t   imageDirID ; // .sdb
+			int32_t   patientID  ; // dir + edb
+			int32_t   seriesID   ; // .edb
+			int32_t   scanID     ; // .sdb
 			int32_t   imageID    ;
 			int16_t   imageSubID ;
 
-			uint8_t  undef[0x0A];
+			// uint8_t  undef[0x06];
+			uint16_t unknown     ; // not included in checksum, unknown why
+			uint32_t type        ;
+			uint32_t checksum    ; // sum of block + 0x789ABCDF
 		} __attribute__((packed)) data;
 
-		bool validIndexEntry()
-		{
-			return foundAddr == data.indexAddress;
-		}
+		bool validChecksum()                              const  { return (calculatedChecksum - data.checksum) == 0x789ABCDF; }
+		bool validIndexEntry()                            const  { return foundAddr == data.indexAddress; }
+		bool isValid()                                    const  { return validIndexEntry() && data.dataLengt > 4 && validChecksum(); }
 
-		bool isValid()
-		{
-			return validIndexEntry()
-				&& data.dataLengt > 4;
-		}
-
-		uint32_t getFoundAddr() const { return foundAddr; }
+		uint32_t getFoundAddr()                           const  { return foundAddr; }
+		uint32_t getCalculatedChecksum()                  const  { return foundAddr; }
 	};
 
 	class MDbDir

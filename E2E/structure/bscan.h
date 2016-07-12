@@ -10,7 +10,7 @@ namespace E2E
 	class SegmentationData;
 	class Image;
 
-	struct BScan : public BaseStructure
+	class BScan : public BaseStructure
 	{
 	public:
 		typedef std::pair<const int, SegmentationData*>  SegmentationPair;
@@ -25,6 +25,9 @@ namespace E2E
 
 		const std::vector<Image*>& getPixmaps() const           { return pixmaps; }
 		void takePixmap(Image* img)                             { pixmaps.push_back(img); }
+
+		std::size_t getImageCols() const;
+		std::size_t getImageRows() const;
 
 
 		const SegmentationMap& getSegmentationMap() const       { return segmentationMap; }

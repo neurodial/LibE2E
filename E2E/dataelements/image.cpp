@@ -99,4 +99,14 @@ namespace E2E
 	}
 
 
+	std::size_t Image::getImageCols() const
+	{
+		return image->cols;
+	}
+
+	std::size_t Image::getImageRows() const
+	{
+		return image->rows;
+	}
+
 }

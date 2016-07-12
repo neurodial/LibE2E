@@ -26,6 +26,7 @@ namespace E2E
 
 		int getAddress()               const                    { return address; }
 		int getNumBytes()              const                    { return length; }
+		int getType()                  const                    { return type;   }
 	};
 }
 
