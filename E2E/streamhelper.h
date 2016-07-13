@@ -10,6 +10,22 @@ namespace StreamHelper
 		stream.read(reinterpret_cast<char*>(dest), sizeof(T)*num);
 	}
 
+	template<typename T>
+	std::size_t readString(std::istream& stream, std::basic_string<T>& string, std::size_t maxChars)
+	{
+		T ch;
+		string.reserve(maxChars);
+		std::size_t charRead;
+		for(charRead = 0; charRead < maxChars; ++charRead)
+		{
+			StreamHelper::readFStream(stream, &ch);
+			if(ch == 0)
+				break;
+			string.push_back(ch);
+		}
+		return charRead;
+	}
+
 	inline bool testString(std::istream& stream, const char* const str, std::size_t len)
 	{
 		char ch;

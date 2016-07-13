@@ -44,10 +44,10 @@ E2E::StringListElement::StringListElement(std::istream& stream, E2E::MDbData& da
 			string.push_back(ch);
 		}
 
-		std::cout << std::endl;
-		std::cout << "StringListElement: ";
-		for(uint16_t c : string)
-			std::cout << static_cast<char>(c);
+// 		std::cout << std::endl;
+// 		std::cout << "StringListElement: ";
+// 		for(uint16_t c : string)
+// 			std::cout << static_cast<char>(c);
 
 		stringList.push_back(std::move(string));
 	}

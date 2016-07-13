@@ -15,6 +15,7 @@
 #include "../dataelements/image.h"
 #include "../dataelements/segmentationdata.h"
 #include "../dataelements/stringlistelement.h"
+#include "../dataelements/patientnameelement.h"
 
 #include "../e2edata.h"
 
@@ -188,6 +189,15 @@ namespace E2E
 				}
 				case 0x09: // Patientendaten : Name, ID
 					DEBUG_OUT("Patientendaten : Name, ID");
+					try
+					{
+						PatientNameElement* patientName = new PatientNameElement(stream, *this);
+						rawData = false;
+						getPatient(e2edata).takePatientName(patientName);
+					}
+					catch(...)
+					{
+					}
 					/*PatientData pdata;
 					StreamHelper::readFStream(stream, &(pdata.data));
 
