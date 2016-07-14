@@ -24,7 +24,7 @@ void E2E::BScan::takeImage(E2E::Image* image)
 
 void E2E::BScan::takeSegmentationData(E2E::SegmentationData* data)
 {
-	segmentationMap.emplace(data->getType(), data);
+	segmentationMap.emplace(data->getSegType(), data);
 
 }
 

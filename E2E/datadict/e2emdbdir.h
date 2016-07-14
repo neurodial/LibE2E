@@ -22,8 +22,8 @@ namespace E2E
 			// uint8_t  dataBlock[0x16];
 			uint32_t  zero       ; // TODO: unknown
 			int32_t   patientID  ; // dir + edb
-			int32_t   seriesID   ; // .edb
-			int32_t   scanID     ; // .sdb
+			int32_t   studyID    ; // .edb
+			int32_t   seriesID   ; // .sdb
 			int32_t   imageID    ;
 			int16_t   imageSubID ;
 
@@ -38,7 +38,7 @@ namespace E2E
 		bool isValid()                                    const  { return validIndexEntry() && data.dataLengt > 4 && validChecksum(); }
 
 		uint32_t getFoundAddr()                           const  { return foundAddr; }
-		uint32_t getCalculatedChecksum()                  const  { return foundAddr; }
+		uint32_t getCalculatedChecksum()                  const  { return calculatedChecksum; }
 	};
 
 	class MDbDir

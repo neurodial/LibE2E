@@ -18,8 +18,8 @@ namespace E2E
 		calculatedChecksum += data.dataLengt;
 		calculatedChecksum += data.zero       ; // TODO: unknown
 		calculatedChecksum += data.patientID  ; // dir + edb
-		calculatedChecksum += data.seriesID   ; // .edb
-		calculatedChecksum += data.scanID     ; // .sdb
+		calculatedChecksum += data.studyID    ; // .edb
+		calculatedChecksum += data.seriesID   ; // .sdb
 		calculatedChecksum += data.imageID    ;
 		calculatedChecksum += data.imageSubID ;
 		

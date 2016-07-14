@@ -12,9 +12,10 @@ namespace E2E
 	{
 		void*                               header = nullptr;
 
-		std::size_t numElements = 0;
 		float*      segmentationData = nullptr;
 		int         type = -1;
+		std::size_t numElements = 0;
+		int         index = -1;
 
 
 	public:
@@ -26,7 +27,8 @@ namespace E2E
 
 		std::size_t size() const                                { return numElements; }
 
-		int getType() const                                     { return type; }
+		int getSegType() const                                  { return type; }
+		int getSegIndex() const                                 { return index; }
 
 	};
 

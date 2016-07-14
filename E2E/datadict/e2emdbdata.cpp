@@ -32,15 +32,13 @@ namespace
 		uint32_t dataAddress;
 		uint32_t dataLengt;
 
-		// uint8_t  dataBlock[0x16];
 		uint32_t  zero       ; // TODO: unknown
 		int32_t   patientID  ; // dir + edb
-		int32_t   seriesID   ; // .edb
-		int32_t   scanID     ; // .sdb
+		int32_t   studyUID   ; // .edb
+		int32_t   seriesID   ; // .sdb
 		int32_t   imageID    ;
 		int16_t   imageSubID ;
 
-		// uint8_t  unknownDataBlock[10];
 		uint16_t unknown     ; // not included in checksum, unknown why
 		uint32_t type        ;
 		uint32_t checksum    ; // sum of block + 0x789ABCDF
@@ -57,9 +55,9 @@ E2E::MDbData::DataClass E2E::MDbData::getDataClass() const
 	MDbDataRawData& data = *(getMDbDataRawData(rawData));
 	if(data.imageID != -1)
 		return DataClass::Image;
-	if(data.scanID != -1)
-		return DataClass::Series;
 	if(data.seriesID != -1)
+		return DataClass::Series;
+	if(data.studyUID != -1)
 		return DataClass::Study;
 	if(data.patientID != -1)
 		return DataClass::Patient;
@@ -96,8 +94,8 @@ namespace E2E
 		    && mdbDirEntry.data.dataLengt    == data.dataLengt
 		    && mdbDirEntry.data.zero         == data.zero
 		    && mdbDirEntry.data.patientID    == data.patientID
+		    && mdbDirEntry.data.studyID      == data.studyUID
 		    && mdbDirEntry.data.seriesID     == data.seriesID
-		    && mdbDirEntry.data.scanID       == data.scanID
 		    && mdbDirEntry.data.imageID      == data.imageID
 		    && mdbDirEntry.data.imageSubID   == data.imageSubID
 
@@ -109,7 +107,6 @@ namespace E2E
 	
 	bool MDbData::evaluate(std::ifstream& stream, DataRoot& e2edata, const MDbDirEntry& mdbDirEntry)
 	{
-
 		stream.seekg(mdbDirEntry.data.dataAddress);
 
 //		MDbData data;
@@ -118,17 +115,17 @@ namespace E2E
 		StreamHelper::readFStream(stream, &(data));
 
 		DEBUG_OUT(isValid(mdbDirEntry) << "\t" << std::hex << mdbDirEntry.data.indexAddress << "\t" << mdbDirEntry.data.dataAddress << "\t" << mdbDirEntry.data.dataLengt << "\t" << " (" << std::dec << mdbDirEntry.data.dataLengt << ")")
-		DEBUG_OUT( '\t' << mdbDirEntry.data.zero << '\t' << mdbDirEntry.data.patientID << '\t' << mdbDirEntry.data.seriesID << '\t' << mdbDirEntry.data.scanID << '\t' << mdbDirEntry.data.imageID << '\t' << mdbDirEntry.data.imageSubID << '\t')
+		DEBUG_OUT( '\t' << mdbDirEntry.data.zero << '\t' << mdbDirEntry.data.patientID << '\t' << mdbDirEntry.data.studyID << '\t' << mdbDirEntry.data.seriesID << '\t' << mdbDirEntry.data.imageID << '\t' << mdbDirEntry.data.imageSubID << '\t')
 		// DEBUG_OUT(mdbDirEntry.data.unknown << '\t' << mdbDirEntry.data.type << '\t')
 			
 
 
 		DEBUG_OUT('(' << mdbDirEntry.data.unknown << " - " << data.unknown << ")\t")
 		DEBUG_OUT(std::hex << mdbDirEntry.data.type << '\t')
-		// DEBUG_OUT('(' << mdbDirEntry.data.checksum << " - " << data.checksum << " = "  << (mdbDirEntry.data.checksum - data.checksum) << ")\t")
+		DEBUG_OUT('(' << (data.checksum - 0x8765431C - mdbDirEntry.data.indexAddress) << ")\t")
 
 
-		DEBUG_OUT("[ " /* << mdbDirEntry.calculatedChecksum << '\t' */ << std::dec << (mdbDirEntry.getCalculatedChecksum() - mdbDirEntry.data.checksum - 0x789ABCDF) << " ]\t");
+		// DEBUG_OUT("[ " /* << mdbDirEntry.calculatedChecksum << '\t' */ << std::dec << (mdbDirEntry.getCalculatedChecksum() - mdbDirEntry.data.checksum - 0x789ABCDF) << " ]\t");
 
 
 		DEBUG_OUT( static_cast<int>(getDataClass()) << ' ')
@@ -420,12 +417,12 @@ namespace E2E
 
 	int MDbData::getSeriesId() const
 	{
-		return getMDbDataRawData(rawData)->scanID;
+		return getMDbDataRawData(rawData)->seriesID;
 	}
 
 	int MDbData::getStudyId() const
 	{
-		return getMDbDataRawData(rawData)->seriesID;
+		return getMDbDataRawData(rawData)->studyUID;
 	}
 
 	int MDbData::getPatientId() const

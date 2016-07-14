@@ -41,7 +41,8 @@ namespace E2E
 			std::cerr << "SegmentationData: numElements != maxElements (" << numElementsHeader << " != " << maxElements << ")\n";
 
 		numElements = std::min(numElementsHeader, maxElements);
-		type = head->type;
+		type  = head->type;
+		index = head->index;
 
 		segmentationData = new float[numElements];
 		StreamHelper::readFStream(stream, segmentationData, numElements);
