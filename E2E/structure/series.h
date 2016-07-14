@@ -2,21 +2,40 @@
 
 #include <map>
 
-#include "cscan.h"
+#include "bscan.h"
 #include "substructure_template.h"
 
 namespace E2E
 {
+	class Image;
+	class TextElement;
 
-
-	class Series : public SubstructureTemplate<CScan>
+	class Series : public SubstructureTemplate<BScan>
 	{
+		Image* sloImage = nullptr;
+		std::vector<Image*> pixmaps;
+		
+		TextElement*        seriesUID  = nullptr;
+		// image
 	public:
+		Series();
+		virtual ~Series();
 
-		      CScan& getCScan(int cscanId)                      { return getAndInsert(cscanId)         ; }
-		const CScan& getCScan(int cscanId) const                { return *(substructureMap.at(cscanId)); }
+		      BScan& getBScan(int bscanId)                      { return getAndInsert(bscanId)         ; }
+		const BScan& getBScan(int bscanId) const                { return *(substructureMap.at(bscanId)); }
 
-		std::size_t getCScanSize() const                        { return substructureMap.size(); }
+		std::size_t getBScanSize() const                        { return substructureMap.size(); }
+
+
+		const Image* getSloImage() const                        { return sloImage; }
+		void   takeSloImage(Image* img);
+
+		const std::vector<Image*>& getPixmaps() const           { return pixmaps; }
+		void takePixmap(Image* img)                             { pixmaps.push_back(img); }
+		
+		
+		TextElement* getSeriesUID() const                        { return seriesUID; }
+		void takeSeriesUID(TextElement* uid);
 	};
 
 

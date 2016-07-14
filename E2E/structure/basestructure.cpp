@@ -16,6 +16,9 @@ namespace E2E
 	{
 		for(BaseElement* ele : rawDataVec)
 			delete ele;
+		
+		for(StringListElement* ele : unknownStringListElement)
+			delete ele;
 	}
 
 

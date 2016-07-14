@@ -31,7 +31,7 @@ namespace E2E
 
 	BaseElement::~BaseElement()
 	{
-		delete rawData;
+		delete[] rawData;
 	}
 
 

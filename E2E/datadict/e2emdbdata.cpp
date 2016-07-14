@@ -15,7 +15,8 @@
 #include "../dataelements/image.h"
 #include "../dataelements/segmentationdata.h"
 #include "../dataelements/stringlistelement.h"
-#include "../dataelements/patientnameelement.h"
+#include "../dataelements/patientdataelement.h"
+#include "../dataelements/textelement.h"
 
 #include "../e2edata.h"
 
@@ -57,9 +58,9 @@ E2E::MDbData::DataClass E2E::MDbData::getDataClass() const
 	if(data.imageID != -1)
 		return DataClass::Image;
 	if(data.scanID != -1)
-		return DataClass::Scann;
-	if(data.seriesID != -1)
 		return DataClass::Series;
+	if(data.seriesID != -1)
+		return DataClass::Study;
 	if(data.patientID != -1)
 		return DataClass::Patient;
 	return DataClass::General;
@@ -139,17 +140,17 @@ namespace E2E
 		if(isValid(mdbDirEntry))
 		{
 			bool rawData = true;
-			switch(mdbDirEntry.data.type & 0xff)
+			switch(mdbDirEntry.data.type)
 			{
-				case 0x00:
+				case 0x40000000:
 				{
 					DEBUG_OUT("Bild");
 					Image* image = new Image(stream, *this);
 					rawData = false;
 					switch(getDataClass())
 					{
-						case DataClass::Scann:
-							getCScan(e2edata).takeSloImage(image);
+						case DataClass::Series:
+							getSeries(e2edata).takeSloImage(image);
 							break;
 						case DataClass::Image:
 							getBScan(e2edata).takeImage(image);
@@ -173,8 +174,8 @@ namespace E2E
 						rawData = false;
 						switch(getDataClass())
 						{
-							case DataClass::Scann:
-								getCScan(e2edata).takePixmap(image);
+							case DataClass::Series:
+								getSeries(e2edata).takePixmap(image);
 								break;
 							case DataClass::Image:
 								getBScan(e2edata).takePixmap(image);
@@ -189,14 +190,17 @@ namespace E2E
 				}
 				case 0x09: // Patientendaten : Name, ID
 					DEBUG_OUT("Patientendaten : Name, ID");
+					PatientDataElement* patientData;
 					try
 					{
-						PatientNameElement* patientName = new PatientNameElement(stream, *this);
+						patientData = new PatientDataElement(stream, *this);
+						getPatient(e2edata).takePatientData(patientData);
 						rawData = false;
-						getPatient(e2edata).takePatientName(patientName);
 					}
 					catch(...)
 					{
+							std::cerr << "patientData can't set\n";
+						delete patientData;
 					}
 					/*PatientData pdata;
 					StreamHelper::readFStream(stream, &(pdata.data));
@@ -211,11 +215,11 @@ namespace E2E
 					DEBUG_OUT("Spectralis OCT");
 					// e2edata->imageMetaData.readData(stream);
 					break;
-				case 0x1d: // Bildmetadaten
+				case 0x271d: // Bildmetadaten
 					DEBUG_OUT("Bildmetadaten");
 					// e2edata->imageMetaData.readData(stream);
 					break;
-				case 0x23: // Segentierungsdaten
+				case 0x2723: // Segentierungsdaten
 					DEBUG_OUT("Segentierungsdaten");
 					if(getDataClass() == DataClass::Image)
 					{
@@ -226,31 +230,31 @@ namespace E2E
 					else
 						std::cerr << "SegmentationData outsite from a image\n";
 					break;
-				case 0x29:
+				case 0x2329:
 					// std::cout << "Gerätename?";
 					DEBUG_OUT("Gerätename");
 					addUnknowStringList2Structure(stream, e2edata);
 					rawData = false;
 					break;
-				case 0x2d:
+				case 0x232d:
 					// std::cout << "Retina?";
 					DEBUG_OUT("Retina");
 					addUnknowStringList2Structure(stream, e2edata);
 					rawData = false;
 					break;
-				case 0x2e:
+				case 0x232e:
 					// std::cout << "OCT ART Volume?";
 					DEBUG_OUT("OCT ART Volume");
 					addUnknowStringList2Structure(stream, e2edata);
 					rawData = false;
 					break;
-				case 0x2f:
+				case 0x232f:
 					// std::cout << "Infra-Red     IR?";
 					DEBUG_OUT("Infra-Red     IR?");
 					addUnknowStringList2Structure(stream, e2edata);
 					rawData = false;
 					break;
-				case 0x30:
+				case 0x2330:
 					// std::cout << "OCT?";
 					DEBUG_OUT("OCT");
 					addUnknowStringList2Structure(stream, e2edata);
@@ -260,13 +264,69 @@ namespace E2E
 					// std::cout << "ua. Operatorname?";
 					DEBUG_OUT("ua. Operatorname");
 					break;
+				case 0x34:
+					DEBUG_OUT("PatientUID");
+					
+					if(getDataClass() == DataClass::Patient)
+					{
+						TextElement* uid;
+						try
+						{
+							uid = new TextElement(stream, *this);
+							getPatient(e2edata).takePatientUID(uid);
+							rawData = false;
+						}
+						catch(...)
+						{
+							std::cerr << "PatientUID can't set\n";
+							delete uid;
+						}
+					}
+					else
+						std::cerr << "PatientUID outsite from patient root\n";
+					break;
 				case 0x35:
 					// std::cout << "StudyUID?";
 					DEBUG_OUT("StudyUID");
+					
+					if(getDataClass() == DataClass::Study)
+					{
+						TextElement* uid;
+						try
+						{
+							uid = new TextElement(stream, *this);
+							getStudy(e2edata).takeStudyUID(uid);
+							rawData = false;
+						}
+						catch(...)
+						{
+							std::cerr << "StudyUID can't set\n";
+							delete uid;
+						}
+					}
+					else
+						std::cerr << "StudyUID outsite from patient root\n";
 					break;
 				case 0x36:
 					// std::cout << "UUID?";
 					DEBUG_OUT("UUID");
+					if(getDataClass() == DataClass::Series)
+					{
+						TextElement* uid;
+						try
+						{
+							uid = new TextElement(stream, *this);
+							getSeries(e2edata).takeSeriesUID(uid);
+							rawData = false;
+						}
+						catch(...)
+						{
+							std::cerr << "SeriesUID can't set\n";
+							delete uid;
+						}
+					}
+					else
+						std::cerr << "SeriesUID outsite from patient root\n";
 					break;
 				case 0xe8:
 					// std::cout << "UUID?";
@@ -300,11 +360,11 @@ namespace E2E
 			case DataClass::Patient:
 				getPatient(e2edata).takeRawElement(baseElement);
 				break;
+			case DataClass::Study:
+				getStudy(e2edata).takeRawElement(baseElement);
+				break;
 			case DataClass::Series:
 				getSeries(e2edata).takeRawElement(baseElement);
-				break;
-			case DataClass::Scann:
-				getCScan(e2edata).takeRawElement(baseElement);
 				break;
 			case DataClass::Image:
 				getBScan(e2edata).takeRawElement(baseElement);
@@ -334,11 +394,11 @@ namespace E2E
 			case DataClass::Patient:
 				getPatient(e2edata).takeStringListElement(baseElement);
 				break;
+			case DataClass::Study:
+				getStudy(e2edata).takeStringListElement(baseElement);
+				break;
 			case DataClass::Series:
 				getSeries(e2edata).takeStringListElement(baseElement);
-				break;
-			case DataClass::Scann:
-				getCScan(e2edata).takeStringListElement(baseElement);
 				break;
 			case DataClass::Image:
 				getBScan(e2edata).takeStringListElement(baseElement);
@@ -358,12 +418,12 @@ namespace E2E
 		return getMDbDataRawData(rawData)->imageID;
 	}
 
-	int MDbData::getScanId() const
+	int MDbData::getSeriesId() const
 	{
 		return getMDbDataRawData(rawData)->scanID;
 	}
 
-	int MDbData::getSeriesId() const
+	int MDbData::getStudyId() const
 	{
 		return getMDbDataRawData(rawData)->seriesID;
 	}
@@ -387,17 +447,17 @@ namespace E2E
 
 	BScan& MDbData::getBScan(DataRoot& e2edata)
 	{
-		return e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).getCScan(getScanId()).getBScan(getImageId());
-	}
-
-	CScan& MDbData::getCScan(DataRoot& e2edata)
-	{
-		return e2edata.getPatient(getPatientId()).getSeries(getSeriesId()).getCScan(getScanId());
+		return e2edata.getPatient(getPatientId()).getStudy(getStudyId()).getCScan(getSeriesId()).getBScan(getImageId());
 	}
 
 	Series& MDbData::getSeries(DataRoot& e2edata)
 	{
-		return e2edata.getPatient(getPatientId()).getSeries(getSeriesId());
+		return e2edata.getPatient(getPatientId()).getStudy(getStudyId()).getCScan(getSeriesId());
+	}
+
+	Study& MDbData::getStudy(DataRoot& e2edata)
+	{
+		return e2edata.getPatient(getPatientId()).getStudy(getStudyId());
 	}
 
 	Patient& MDbData::getPatient(DataRoot& e2edata)

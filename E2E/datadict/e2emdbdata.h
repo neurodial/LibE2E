@@ -10,9 +10,9 @@ namespace E2E
 
 	class DataRoot;
 	class Patient;
-	class CScan;
-	class BScan;
 	class Series;
+	class BScan;
+	class Study;
 
 	class MDbDirEntry;
 
@@ -25,7 +25,7 @@ namespace E2E
 
 		const Options& options;
 	public:
-		enum class DataClass { General, Patient, Series, Scann, Image  };
+		enum class DataClass { General, Patient, Study, Series, Image  };
 
 		MDbData(const E2E::Options& options);
 		~MDbData();
@@ -39,14 +39,14 @@ namespace E2E
 		DataClass getDataClass() const;
 		int getImageSubId() const;
 		int getImageId()    const;
-		int getScanId()     const;
 		int getSeriesId()   const;
+		int getStudyId()    const;
 		int getPatientId()  const;
 
 
 		Patient&  getPatient(DataRoot& e2edata);
+		Study  &  getStudy  (DataRoot& e2edata);
 		Series &  getSeries (DataRoot& e2edata);
-		CScan  &  getCScan  (DataRoot& e2edata);
 		BScan  &  getBScan  (DataRoot& e2edata);
 
 		const Options& getOptions() const                        { return options; }

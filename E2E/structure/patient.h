@@ -2,27 +2,31 @@
 
 #include <map>
 
-#include "series.h"
+#include "study.h"
 #include "substructure_template.h"
 
 namespace E2E
 {
+	class TextElement;
+	class PatientDataElement;
 
-	class PatientNameElement;
-
-	class Patient : public SubstructureTemplate<Series>
+	class Patient : public SubstructureTemplate<Study>
 	{
-		PatientNameElement* patientName = nullptr;
+		PatientDataElement* patientData = nullptr;
+		TextElement*        patientUID  = nullptr;
 	public:
 	    virtual ~Patient();
 
-		      Series& getSeries(int seriesId)                   { return getAndInsert(seriesId)         ; }
-		const Series& getSeries(int seriesId) const             { return *(substructureMap.at(seriesId)); }
+		      Study& getStudy(int seriesId)                     { return getAndInsert(seriesId)         ; }
+		const Study& getStudy(int seriesId) const               { return *(substructureMap.at(seriesId)); }
 
 		std::size_t getSeriesSize() const                       { return substructureMap.size(); }
 
-		PatientNameElement* getPatientName() const              { return patientName;     }
-		void takePatientName(PatientNameElement* pat);
+		PatientDataElement* getPatientData() const              { return patientData;     }
+		void takePatientData(PatientDataElement* pat);
+		
+		TextElement* getPatientUID() const                      { return patientUID; }
+		void takePatientUID(TextElement* uid);
 	};
 
 

@@ -7,6 +7,12 @@
 E2E::BScan::~BScan()
 {
 	delete bscanImage;
+	
+	for(SegmentationPair data : segmentationMap)
+		delete data.second;
+	
+	for(Image* data : pixmaps)
+		delete data;
 }
 
 

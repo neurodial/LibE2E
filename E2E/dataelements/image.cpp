@@ -56,18 +56,6 @@ namespace E2E
 		ImageHeader* head = reinterpret_cast<ImageHeader*>(header);
 		StreamHelper::readFStream(stream, head);
 
-		/*
-#ifndef NDEBUG
-		std::cout << "header: " << head->breite << " - " << head->hoehe << " | " << head->u1 << " - " << head->u2;
-
-		std::cout << '\t';
-		for(int i=0; i<sizeof(ImageHeader::undef); ++i)
-			std::cout << std::hex << std::setw(2) << (static_cast<unsigned>(head->undef[i]) & 0xFF) << ' ';
-
-		std::cout << std::dec << std::endl;
-#endif
-		*/
-
 		image = cv::Mat(head->breite, head->hoehe, cvFormat);
 
 		std::size_t num = head->breite*head->hoehe;

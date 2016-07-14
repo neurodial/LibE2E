@@ -11,8 +11,8 @@ namespace E2E
 	class SubstructureTemplate : public BaseStructure
 	{
 	public:
-		typedef std::pair<const IndexType, Type*>   SubstructurePair;
-		typedef std::map<IndexType, Type*>           SubstructureMap;
+		typedef std::pair<const IndexType, Type*>        SubstructurePair;
+		typedef std::map<IndexType, Type*>               SubstructureMap;
 		typedef typename SubstructureMap::iterator       SubstructureIterator;
 		typedef typename SubstructureMap::const_iterator SubstructureCIterator;
 
@@ -34,7 +34,7 @@ namespace E2E
 			SubstructureIterator it = substructureMap.find(id);
 			if(it == substructureMap.end())
 			{
-				std::pair<SubstructureIterator, bool> pit = substructureMap.emplace(id, new Type());
+				std::pair<SubstructureIterator, bool> pit = substructureMap.emplace(id, new Type);
 				if(pit.second == false)
 					throw "SubstructureTemplate pit.second == false";
 				return *((pit.first)->second);
