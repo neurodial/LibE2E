@@ -29,7 +29,7 @@ namespace E2E
 	, header(new ImageHeader)
 	, image (new cv::Mat)
 	{
-		if(data.getImageSubId() == 0) // SLO
+		if(data.getSubId() == 0) // SLO
 			readCVImage(stream, *image, CV_8UC1);
 		else // BScan
 			readCVImage(stream, *image, CV_16UC1);

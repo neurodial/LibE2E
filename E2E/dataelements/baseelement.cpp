@@ -27,6 +27,7 @@ namespace E2E
 		address = data.getDataAdress();
 		length  = data.getDataLength();
 		type    = data.getTypeValue();
+		subID   = data.getSubId();
 	}
 
 	BaseElement::~BaseElement()

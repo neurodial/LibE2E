@@ -37,7 +37,7 @@ namespace E2E
 		bool evaluate( std::ifstream& stream, E2E::DataRoot& e2edata, const E2E::MDbDirEntry& mdbDirEntry);
 
 		DataClass getDataClass() const;
-		int getImageSubId() const;
+		int getSubId()      const;
 		int getImageId()    const;
 		int getSeriesId()   const;
 		int getStudyId()    const;

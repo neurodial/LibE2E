@@ -7,6 +7,8 @@
 
 namespace E2E
 {
+
+	class BScansMetaDataElement;
 	class Image;
 	class TextElement;
 
@@ -16,6 +18,8 @@ namespace E2E
 		std::vector<Image*> pixmaps;
 		
 		TextElement*        seriesUID  = nullptr;
+
+		BScansMetaDataElement* metaDataElement = nullptr;
 		// image
 	public:
 		Series();
@@ -33,6 +37,8 @@ namespace E2E
 		const std::vector<Image*>& getPixmaps() const           { return pixmaps; }
 		void takePixmap(Image* img)                             { pixmaps.push_back(img); }
 		
+		const BScansMetaDataElement* getBScanMetaData() const    { return metaDataElement; }
+		void takeBScansMetaData(BScansMetaDataElement* ele);
 		
 		TextElement* getSeriesUID() const                        { return seriesUID; }
 		void takeSeriesUID(TextElement* uid);

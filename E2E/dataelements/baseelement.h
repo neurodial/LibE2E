@@ -17,6 +17,8 @@ namespace E2E
 		int address    = 0;
 		int length     = 0;
 
+		int subID      = 0;
+
 	public:
 		BaseElement(std::istream& stream, MDbData& data);
 		virtual ~BaseElement();
@@ -27,6 +29,8 @@ namespace E2E
 		int getAddress()               const                    { return address; }
 		int getNumBytes()              const                    { return length; }
 		int getType()                  const                    { return type;   }
+
+		int getSubID()                 const                    { return subID;  }
 	};
 }
 

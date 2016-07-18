@@ -2,6 +2,7 @@
 
 #include "../dataelements/image.h"
 #include "../dataelements/textelement.h"
+#include "../dataelements/bscansmetadataelement.h"
 
 
 namespace E2E
@@ -21,6 +22,7 @@ namespace E2E
 			delete data;
 		
 		delete seriesUID;
+		delete metaDataElement;
 	}
 
 
@@ -36,6 +38,13 @@ namespace E2E
 			throw "mutlible StudyID";
 		// delete studyUID;
 		seriesUID = uid;
+	}
+
+	void Series::takeBScansMetaData(BScansMetaDataElement* ele)
+	{
+		if(metaDataElement)
+			throw "mutlible BScansMetaDataElement";
+		metaDataElement = ele;
 	}
 
 }

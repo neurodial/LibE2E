@@ -17,6 +17,7 @@
 #include "../dataelements/stringlistelement.h"
 #include "../dataelements/patientdataelement.h"
 #include "../dataelements/textelement.h"
+#include "../dataelements/bscansmetadataelement.h"
 
 #include "../e2edata.h"
 
@@ -37,11 +38,11 @@ namespace
 		int32_t   studyUID   ; // .edb
 		int32_t   seriesID   ; // .sdb
 		int32_t   imageID    ;
-		int16_t   imageSubID ;
+		int16_t   subID      ;
 
-		uint16_t unknown     ; // not included in checksum, unknown why
+		uint16_t unknown     ;
 		uint32_t type        ;
-		uint32_t checksum    ; // sum of block + 0x789ABCDF
+		uint32_t checksum    ;
 
 	} __attribute__((packed));
 
@@ -88,7 +89,7 @@ namespace E2E
 	{
 		MDbDataRawData& data = *(getMDbDataRawData(rawData));
 
-		return memcmp(data.mdbdataStr, "MDbData", 8) == 0
+		return memcmp(data.mdbdataStr, "MDbData", 8) == 0;/*
 		    && mdbDirEntry.data.indexAddress == data.indexAddress
 		    && mdbDirEntry.data.dataAddress  == data.dataAddress
 		    && mdbDirEntry.data.dataLengt    == data.dataLengt
@@ -101,12 +102,14 @@ namespace E2E
 
 	//	    && mdbDirEntry.data.unknown      == data.unknown;
 		    && mdbDirEntry.data.type         == data.type;
-	//	    && mdbDirEntry.data.checksum     == data.checksum
+	//	    && mdbDirEntry.data.checksum     == data.checksum*/
 	}
 
 	
 	bool MDbData::evaluate(std::ifstream& stream, DataRoot& e2edata, const MDbDirEntry& mdbDirEntry)
 	{
+		if(mdbDirEntry.data.dataLengt <= 4) // TODO: prüfe dateigröße gegen speicheradresse
+			return false;
 		stream.seekg(mdbDirEntry.data.dataAddress);
 
 //		MDbData data;
@@ -186,23 +189,25 @@ namespace E2E
 					break;
 				}
 				case 0x09: // Patientendaten : Name, ID
-					DEBUG_OUT("Patientendaten : Name, ID");
-					PatientDataElement* patientData;
-					try
 					{
-						patientData = new PatientDataElement(stream, *this);
-						getPatient(e2edata).takePatientData(patientData);
-						rawData = false;
-					}
-					catch(...)
-					{
-							std::cerr << "patientData can't set\n";
-						delete patientData;
-					}
-					/*PatientData pdata;
-					StreamHelper::readFStream(stream, &(pdata.data));
+						DEBUG_OUT("Patientendaten : Name, ID");
+						PatientDataElement* patientData;
+						try
+						{
+							patientData = new PatientDataElement(stream, *this);
+							getPatient(e2edata).takePatientData(patientData);
+							rawData = false;
+						}
+						catch(...)
+						{
+								std::cerr << "patientData can't set\n";
+							delete patientData;
+						}
+						/*PatientData pdata;
+						StreamHelper::readFStream(stream, &(pdata.data));
 
-					pdata.printData();*/
+						pdata.printData();*/
+					}
 					break;
 				case 0x0a:
 					DEBUG_OUT("apture Mod le 1");
@@ -214,6 +219,21 @@ namespace E2E
 					break;
 				case 0x271d: // Bildmetadaten
 					DEBUG_OUT("Bildmetadaten");
+					if(getDataClass() == DataClass::Series)
+					{
+						BScansMetaDataElement* metaData;
+						try
+						{
+							metaData = new BScansMetaDataElement(stream, *this);
+							getSeries(e2edata).takeBScansMetaData(metaData);
+							rawData = false;
+						}
+						catch(...)
+						{
+							std::cerr << "BScansMetaDataElement can't set\n";
+							delete metaData;
+						}
+					}
 					// e2edata->imageMetaData.readData(stream);
 					break;
 				case 0x2723: // Segentierungsdaten
@@ -405,9 +425,9 @@ namespace E2E
 	}
 
 
-	int MDbData::getImageSubId() const
+	int MDbData::getSubId() const
 	{
-		return getMDbDataRawData(rawData)->imageSubID;
+		return getMDbDataRawData(rawData)->subID;
 	}
 
 	int MDbData::getImageId() const

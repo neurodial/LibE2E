@@ -35,7 +35,7 @@ namespace E2E
 
 		bool validChecksum()                              const  { return (calculatedChecksum - data.checksum) == 0x789ABCDF; }
 		bool validIndexEntry()                            const  { return foundAddr == data.indexAddress; }
-		bool isValid()                                    const  { return validIndexEntry() && data.dataLengt > 4 && validChecksum(); }
+		bool isValid()                                    const  { return validIndexEntry() && validChecksum(); }
 
 		uint32_t getFoundAddr()                           const  { return foundAddr; }
 		uint32_t getCalculatedChecksum()                  const  { return calculatedChecksum; }
