@@ -21,6 +21,7 @@
 
 #include "../e2edata.h"
 
+/*
 namespace
 {
 
@@ -49,16 +50,18 @@ namespace
 	MDbDataRawData* getMDbDataRawData(void* voidData) { return reinterpret_cast<MDbDataRawData*>(voidData); }
 
 }
+*/
+
 
 
 E2E::MDbData::DataClass E2E::MDbData::getDataClass() const
 {
-	MDbDataRawData& data = *(getMDbDataRawData(rawData));
+	DictEntryRawData::Raw& data = dictRawData->getRaw();
 	if(data.imageID != -1)
 		return DataClass::Image;
 	if(data.seriesID != -1)
 		return DataClass::Series;
-	if(data.studyUID != -1)
+	if(data.studyID != -1)
 		return DataClass::Study;
 	if(data.patientID != -1)
 		return DataClass::Patient;
@@ -73,7 +76,7 @@ static_assert(sizeof(MDbDataRawData) == E2E::MDbData::headerSize, "headerSize is
 namespace E2E
 {
 	MDbData::MDbData(const Options& options)
-	: rawData(new MDbDataRawData)
+	: dictRawData(new DictEntryRawData)
 	, options(options)
 	{
 
@@ -85,9 +88,9 @@ namespace E2E
 	}
 
 	
-	bool MDbData::isValid(const MDbDirEntry& mdbDirEntry)
+	bool MDbData::isValid(const DictEntryRawData& /*mdbDirEntry}*/)
 	{
-		MDbDataRawData& data = *(getMDbDataRawData(rawData));
+	DictEntryRawData::Raw& data = dictRawData->getRaw();
 
 		return memcmp(data.mdbdataStr, "MDbData", 8) == 0;/*
 		    && mdbDirEntry.data.indexAddress == data.indexAddress
@@ -106,26 +109,26 @@ namespace E2E
 	}
 
 	
-	bool MDbData::evaluate(std::ifstream& stream, DataRoot& e2edata, const MDbDirEntry& mdbDirEntry)
+	bool MDbData::evaluate(std::ifstream& stream, DataRoot& e2edata, const DictEntryRawData& mdbDirEntry)
 	{
-		if(mdbDirEntry.data.dataLengt <= 4) // TODO: prüfe dateigröße gegen speicheradresse
+		if(mdbDirEntry.getRaw().dataLengt <= 4) // TODO: prüfe dateigröße gegen speicheradresse
 			return false;
-		stream.seekg(mdbDirEntry.data.dataAddress);
+		stream.seekg(mdbDirEntry.getRaw().dataAddress);
 
 //		MDbData data;
 		MDbDataRawData& data = *(reinterpret_cast<MDbDataRawData*>(rawData));
 
 		StreamHelper::readFStream(stream, &(data));
 
-		DEBUG_OUT(isValid(mdbDirEntry) << "\t" << std::hex << mdbDirEntry.data.indexAddress << "\t" << mdbDirEntry.data.dataAddress << "\t" << mdbDirEntry.data.dataLengt << "\t" << " (" << std::dec << mdbDirEntry.data.dataLengt << ")")
-		DEBUG_OUT( '\t' << mdbDirEntry.data.zero << '\t' << mdbDirEntry.data.patientID << '\t' << mdbDirEntry.data.studyID << '\t' << mdbDirEntry.data.seriesID << '\t' << mdbDirEntry.data.imageID << '\t' << mdbDirEntry.data.imageSubID << '\t')
-		// DEBUG_OUT(mdbDirEntry.data.unknown << '\t' << mdbDirEntry.data.type << '\t')
+		DEBUG_OUT(isValid(mdbDirEntry) << "\t" << std::hex << mdbDirEntry.getRaw().indexAddress << "\t" << mdbDirEntry.getRaw().dataAddress << "\t" << mdbDirEntry.getRaw().dataLengt << "\t" << " (" << std::dec << mdbDirEntry.getRaw().dataLengt << ")")
+		DEBUG_OUT( '\t' << mdbDirEntry.getRaw().zero << '\t' << mdbDirEntry.getRaw().patientID << '\t' << mdbDirEntry.getRaw().studyID << '\t' << mdbDirEntry.getRaw().seriesID << '\t' << mdbDirEntry.getRaw().imageID << '\t' << mdbDirEntry.getRaw().imageSubID << '\t')
+		// DEBUG_OUT(mdbDirEntry.getRaw().unknown << '\t' << mdbDirEntry.getRaw().type << '\t')
 			
 
 
-		DEBUG_OUT('(' << mdbDirEntry.data.unknown << " - " << data.unknown << ")\t")
-		DEBUG_OUT(std::hex << mdbDirEntry.data.type << '\t')
-		DEBUG_OUT('(' << (data.checksum - 0x8765431C - mdbDirEntry.data.indexAddress) << ")\t")
+		DEBUG_OUT('(' << mdbDirEntry.getRaw().unknown << " - " << data.unknown << ")\t")
+		DEBUG_OUT(std::hex << mdbDirEntry.getRaw().type << '\t')
+		DEBUG_OUT('(' << (data.checksum - 0x8765431C - mdbDirEntry.getRaw().indexAddress) << ")\t")
 
 
 		// DEBUG_OUT("[ " /* << mdbDirEntry.calculatedChecksum << '\t' */ << std::dec << (mdbDirEntry.getCalculatedChecksum() - mdbDirEntry.data.checksum - 0x789ABCDF) << " ]\t");
@@ -140,7 +143,7 @@ namespace E2E
 		if(isValid(mdbDirEntry))
 		{
 			bool rawData = true;
-			switch(mdbDirEntry.data.type)
+			switch(mdbDirEntry.getRaw().type)
 			{
 				case 0x40000000:
 				{

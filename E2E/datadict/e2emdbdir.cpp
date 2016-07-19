@@ -7,41 +7,6 @@
 namespace E2E
 {
 
-	MDbDirEntry::MDbDirEntry(uint32_t found, std::ifstream& stream)
-	: foundAddr(found)
-	{
-		StreamHelper::readFStream(stream, &(data));
-		
-		calculatedChecksum = 0;
-		calculatedChecksum += data.indexAddress;
-		calculatedChecksum += data.dataAddress;
-		calculatedChecksum += data.dataLengt;
-		calculatedChecksum += data.zero       ; // TODO: unknown
-		calculatedChecksum += data.patientID  ; // dir + edb
-		calculatedChecksum += data.studyID    ; // .edb
-		calculatedChecksum += data.seriesID   ; // .sdb
-		calculatedChecksum += data.imageID    ;
-		calculatedChecksum += data.imageSubID ;
-		
-		// calculatedChecksum += data.unknown    ;
-		calculatedChecksum += data.type;
-		
-// 		int16_t* ptr = reinterpret_cast<int16_t*>(&data.undef);
-// 		for(int i = 0; i < sizeof(data.undef); i+=sizeof(uint16_t))
-// 		{
-// 			sum += *ptr;
-// 			++ptr;
-// 		}
-
-		if(!validIndexEntry())
-			std::cerr << "MDbDirEntry: IndexEntry is invalid\n";
-
-
-		if(!validChecksum())
-			std::cerr << "MDbDirEntry: Checksum is invalid\n";
-	}
-
-
 	void MDbDir::readIndex(std::ifstream& stream, uint32_t linkAddr)
 	{
 		// read adress from MDbDir
@@ -69,7 +34,9 @@ namespace E2E
 
 		while(true)
 		{
-			MDbDirEntry set(stream.tellg(), stream);
+			DictEntryRawData set(stream, stream.tellg(), DictEntryRawData::EntryType::Dir);
+
+			// std::cout << set << std::endl;
 
 			if(set.isValid())
 				index.push_back(set);

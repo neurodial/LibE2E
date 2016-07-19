@@ -35,7 +35,7 @@ namespace
 
 	std::ostream& operator<<(std::ostream& stream, const RawData& data)
 	{
-		for(int i=0; i<sizeof(data.undef)/sizeof(data.undef[0]); ++i)
+		for(std::size_t i=0; i<sizeof(data.undef)/sizeof(data.undef[0]); ++i)
 			stream << data.undef[i] << '\t';
 
 		stream << data.x1 << '\t';
@@ -43,7 +43,7 @@ namespace
 		stream << data.x2 << '\t';
 		stream << data.y2 << '\t';
 
-		for(int i=0; i<sizeof(data.undef2)/sizeof(data.undef2[0]); ++i)
+		for(std::size_t i=0; i<sizeof(data.undef2)/sizeof(data.undef2[0]); ++i)
 			stream << data.undef2[i] << '\t';
 
 		return stream;
@@ -62,7 +62,7 @@ namespace E2E
 
 		// TODO size check
 
-		for(int i=0; i<header.numImages; ++i)
+		for(std::size_t i=0; i<header.numImages; ++i)
 		{
 			BScansData dataField;
 			RawData rawDataField;

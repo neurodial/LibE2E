@@ -14,11 +14,11 @@ namespace E2E
 	class BScan;
 	class Study;
 
-	class MDbDirEntry;
+	class DictEntryRawData;
 
 	class MDbData
 	{
-		void*                               rawData = nullptr;
+		DictEntryRawData*                    dictRawData = nullptr;
 
 		void addUnknow2Structure(std::ifstream& stream, E2E::DataRoot& e2edata);
 		bool addUnknowStringList2Structure(std::ifstream& stream, DataRoot& e2edata);
@@ -32,9 +32,9 @@ namespace E2E
 
 		static const std::size_t headerSize = 60;
 
-		bool isValid(const MDbDirEntry& mdbDirEntry);
+		bool isValid(const DictEntryRawData& mdbDirEntry);
 		
-		bool evaluate( std::ifstream& stream, E2E::DataRoot& e2edata, const E2E::MDbDirEntry& mdbDirEntry);
+		bool evaluate( std::ifstream& stream, E2E::DataRoot& e2edata, const E2E::DictEntryRawData& mdbDirEntry);
 
 		DataClass getDataClass() const;
 		int getSubId()      const;

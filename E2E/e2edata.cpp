@@ -36,9 +36,9 @@ namespace E2E
 
 		dir.readIndex(stream, 0x4c);
 
-		const std::vector<MDbDirEntry>& vec = dir.getIndexVec();
+		const std::vector<DictEntryRawData>& vec = dir.getIndexVec();
 
-		for(const MDbDirEntry& dirEntry : vec)
+		for(const DictEntryRawData& dirEntry : vec)
 		{
 			MDbData data(options);
 			data.evaluate(stream, dataRoot, dirEntry);
