@@ -13,8 +13,23 @@ namespace E2E
 	class BScan : public BaseStructure
 	{
 	public:
-		typedef std::pair<const int, SegmentationData*>  SegmentationPair;
-		typedef std::map<int, SegmentationData*>         SegmentationMap;
+		struct SegPair
+		{
+			SegPair() = default;
+			SegPair(int index, int type) : index(index), type(type) {}
+			bool operator<(const SegPair& other) const
+			{
+				if(index == other.index)
+					return type < other.type;
+				return index < other.index;
+			}
+
+			int index = 0;
+			int type  = 0;
+		};
+
+		typedef std::pair<const SegPair, SegmentationData*>  SegmentationPair;
+		typedef std::map<SegPair, SegmentationData*>         SegmentationMap;
 		typedef typename SegmentationMap::iterator       SubstructureIterator;
 		typedef typename SegmentationMap::const_iterator SubstructureCIterator;
 
