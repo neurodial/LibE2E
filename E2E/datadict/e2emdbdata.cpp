@@ -21,42 +21,10 @@
 
 #include "../e2edata.h"
 
-/*
-namespace
-{
-
-	struct MDbDataRawData
-	{
-		uint8_t  mdbdataStr[0x08]; // MDbData + \0
-		uint32_t zero1;
-		uint32_t undef;
-		uint32_t indexAddress;
-		uint32_t dataAddress;
-		uint32_t dataLengt;
-
-		uint32_t  zero       ; // TODO: unknown
-		int32_t   patientID  ; // dir + edb
-		int32_t   studyUID   ; // .edb
-		int32_t   seriesID   ; // .sdb
-		int32_t   imageID    ;
-		int16_t   subID      ;
-
-		uint16_t unknown     ;
-		uint32_t type        ;
-		uint32_t checksum    ;
-
-	} __attribute__((packed));
-
-	MDbDataRawData* getMDbDataRawData(void* voidData) { return reinterpret_cast<MDbDataRawData*>(voidData); }
-
-}
-*/
-
-
 
 E2E::MDbData::DataClass E2E::MDbData::getDataClass() const
 {
-	DictEntryRawData::Raw& data = dictRawData->getRaw();
+	const DictEntryRawData::Raw& data = dictRawData->getRaw();
 	if(data.imageID != -1)
 		return DataClass::Image;
 	if(data.seriesID != -1)
@@ -70,58 +38,26 @@ E2E::MDbData::DataClass E2E::MDbData::getDataClass() const
 }
 
 
-static_assert(sizeof(MDbDataRawData) == E2E::MDbData::headerSize, "headerSize is incorrect");
-
-
 namespace E2E
 {
-	MDbData::MDbData(const Options& options)
-	: dictRawData(new DictEntryRawData)
+	MDbData::MDbData(const E2E::Options& options, std::ifstream& stream, E2E::DataRoot& e2edata, const E2E::DictEntryRawData& mdbDirEntry)
+	: mdbDirEntry(mdbDirEntry)
+	, e2edata(e2edata)
 	, options(options)
 	{
-
-	}
-
-	MDbData::~MDbData()
-	{
-		delete getMDbDataRawData(rawData);
-	}
-
-	
-	bool MDbData::isValid(const DictEntryRawData& /*mdbDirEntry}*/)
-	{
-	DictEntryRawData::Raw& data = dictRawData->getRaw();
-
-		return memcmp(data.mdbdataStr, "MDbData", 8) == 0;/*
-		    && mdbDirEntry.data.indexAddress == data.indexAddress
-		    && mdbDirEntry.data.dataAddress  == data.dataAddress
-		    && mdbDirEntry.data.dataLengt    == data.dataLengt
-		    && mdbDirEntry.data.zero         == data.zero
-		    && mdbDirEntry.data.patientID    == data.patientID
-		    && mdbDirEntry.data.studyID      == data.studyUID
-		    && mdbDirEntry.data.seriesID     == data.seriesID
-		    && mdbDirEntry.data.imageID      == data.imageID
-		    && mdbDirEntry.data.imageSubID   == data.imageSubID
-
-	//	    && mdbDirEntry.data.unknown      == data.unknown;
-		    && mdbDirEntry.data.type         == data.type;
-	//	    && mdbDirEntry.data.checksum     == data.checksum*/
-	}
-
-	
-	bool MDbData::evaluate(std::ifstream& stream, DataRoot& e2edata, const DictEntryRawData& mdbDirEntry)
-	{
 		if(mdbDirEntry.getRaw().dataLengt <= 4) // TODO: prüfe dateigröße gegen speicheradresse
-			return false;
+			return;
+
 		stream.seekg(mdbDirEntry.getRaw().dataAddress);
 
-//		MDbData data;
-		MDbDataRawData& data = *(reinterpret_cast<MDbDataRawData*>(rawData));
 
-		StreamHelper::readFStream(stream, &(data));
+		dictRawData = new DictEntryRawData(stream, stream.tellg(), DictEntryRawData::EntryType::Data); // TODO: move tellg to DictEntryRawData class? complexity?
+		const DictEntryRawData::Raw& data = dictRawData->getRaw();
 
+		// DEBUG_OUT(mdbDirEntry.validChecksum() << '\t' << mdbDirEntry.validIndexEntry() << '\t');
+		// DEBUG_OUT(dictRawData->validChecksum() << '\t' << dictRawData->validIndexEntry() << '\t');
 		DEBUG_OUT(isValid(mdbDirEntry) << "\t" << std::hex << mdbDirEntry.getRaw().indexAddress << "\t" << mdbDirEntry.getRaw().dataAddress << "\t" << mdbDirEntry.getRaw().dataLengt << "\t" << " (" << std::dec << mdbDirEntry.getRaw().dataLengt << ")")
-		DEBUG_OUT( '\t' << mdbDirEntry.getRaw().zero << '\t' << mdbDirEntry.getRaw().patientID << '\t' << mdbDirEntry.getRaw().studyID << '\t' << mdbDirEntry.getRaw().seriesID << '\t' << mdbDirEntry.getRaw().imageID << '\t' << mdbDirEntry.getRaw().imageSubID << '\t')
+		DEBUG_OUT( '\t' << mdbDirEntry.getRaw().zero << '\t' << mdbDirEntry.getRaw().patientID << '\t' << mdbDirEntry.getRaw().studyID << '\t' << mdbDirEntry.getRaw().seriesID << '\t' << mdbDirEntry.getRaw().imageID << '\t' << mdbDirEntry.getRaw().subID << '\t')
 		// DEBUG_OUT(mdbDirEntry.getRaw().unknown << '\t' << mdbDirEntry.getRaw().type << '\t')
 			
 
@@ -135,10 +71,7 @@ namespace E2E
 
 
 		DEBUG_OUT( static_cast<int>(getDataClass()) << ' ')
-		//std::cout << "Lese " << std::hex << set.data.dataAddress;
-/*
-		for(std::size_t i=0; i<sizeof(MDbDataRawData::unknownDataBlock); ++i)
-			DEBUG_OUT( std::hex << std::setw(2) << (static_cast<unsigned>(data.unknownDataBlock[i]) & 0xFF) << ' ')*/
+
 
 		if(isValid(mdbDirEntry))
 		{
@@ -153,10 +86,10 @@ namespace E2E
 					switch(getDataClass())
 					{
 						case DataClass::Series:
-							getSeries(e2edata).takeSloImage(image);
+							getSeries().takeSloImage(image);
 							break;
 						case DataClass::Image:
-							getBScan(e2edata).takeImage(image);
+							getBScan().takeImage(image);
 							break;
 						default:
 							delete image;
@@ -164,8 +97,6 @@ namespace E2E
 							std::cerr << "image: unexpected data class";
 					}
 
-					// readImage(stream, cscan, set);
-					// e2edata.getPatient();
 					break;
 				}
 				case 0x02: // Vorschaubild JFIF
@@ -178,10 +109,10 @@ namespace E2E
 						switch(getDataClass())
 						{
 							case DataClass::Series:
-								getSeries(e2edata).takePixmap(image);
+								getSeries().takePixmap(image);
 								break;
 							case DataClass::Image:
-								getBScan(e2edata).takePixmap(image);
+								getBScan().takePixmap(image);
 								break;
 							default:
 								delete image;
@@ -198,7 +129,7 @@ namespace E2E
 						try
 						{
 							patientData = new PatientDataElement(stream, *this);
-							getPatient(e2edata).takePatientData(patientData);
+							getPatient().takePatientData(patientData);
 							rawData = false;
 						}
 						catch(...)
@@ -206,10 +137,6 @@ namespace E2E
 								std::cerr << "patientData can't set\n";
 							delete patientData;
 						}
-						/*PatientData pdata;
-						StreamHelper::readFStream(stream, &(pdata.data));
-
-						pdata.printData();*/
 					}
 					break;
 				case 0x0a:
@@ -228,7 +155,7 @@ namespace E2E
 						try
 						{
 							metaData = new BScansMetaDataElement(stream, *this);
-							getSeries(e2edata).takeBScansMetaData(metaData);
+							getSeries().takeBScansMetaData(metaData);
 							rawData = false;
 						}
 						catch(...)
@@ -245,7 +172,7 @@ namespace E2E
 					{
 						SegmentationData* segData = new SegmentationData(stream, *this);
 						rawData = false;
-						getBScan(e2edata).takeSegmentationData(segData);
+						getBScan().takeSegmentationData(segData);
 					}
 					else
 						std::cerr << "SegmentationData outsite from a image\n";
@@ -253,31 +180,31 @@ namespace E2E
 				case 0x2329:
 					// std::cout << "Gerätename?";
 					DEBUG_OUT("Gerätename");
-					addUnknowStringList2Structure(stream, e2edata);
+					addUnknowStringList2Structure(stream);
 					rawData = false;
 					break;
 				case 0x232d:
 					// std::cout << "Retina?";
 					DEBUG_OUT("Retina");
-					addUnknowStringList2Structure(stream, e2edata);
+					addUnknowStringList2Structure(stream);
 					rawData = false;
 					break;
 				case 0x232e:
 					// std::cout << "OCT ART Volume?";
 					DEBUG_OUT("OCT ART Volume");
-					addUnknowStringList2Structure(stream, e2edata);
+					addUnknowStringList2Structure(stream);
 					rawData = false;
 					break;
 				case 0x232f:
 					// std::cout << "Infra-Red     IR?";
 					DEBUG_OUT("Infra-Red     IR?");
-					addUnknowStringList2Structure(stream, e2edata);
+					addUnknowStringList2Structure(stream);
 					rawData = false;
 					break;
 				case 0x2330:
 					// std::cout << "OCT?";
 					DEBUG_OUT("OCT");
-					addUnknowStringList2Structure(stream, e2edata);
+					addUnknowStringList2Structure(stream);
 					rawData = false;
 					break;
 				case 0x3a:
@@ -293,7 +220,7 @@ namespace E2E
 						try
 						{
 							uid = new TextElement(stream, *this);
-							getPatient(e2edata).takePatientUID(uid);
+							getPatient().takePatientUID(uid);
 							rawData = false;
 						}
 						catch(...)
@@ -315,7 +242,7 @@ namespace E2E
 						try
 						{
 							uid = new TextElement(stream, *this);
-							getStudy(e2edata).takeStudyUID(uid);
+							getStudy().takeStudyUID(uid);
 							rawData = false;
 						}
 						catch(...)
@@ -336,7 +263,7 @@ namespace E2E
 						try
 						{
 							uid = new TextElement(stream, *this);
-							getSeries(e2edata).takeSeriesUID(uid);
+							getSeries().takeSeriesUID(uid);
 							rawData = false;
 						}
 						catch(...)
@@ -358,16 +285,26 @@ namespace E2E
 			}
 
 			if(rawData && options.readRawData)
-				addUnknow2Structure(stream, e2edata);
+				addUnknow2Structure(stream);
 
 		}
 		DEBUG_OUT(std::endl)
+	}
 
-		return true;
+	MDbData::~MDbData()
+	{
+		delete dictRawData;
 	}
 
 
-	void MDbData::addUnknow2Structure(std::ifstream& stream, DataRoot& e2edata)
+	bool MDbData::isValid(const DictEntryRawData& mdbDirEntry)
+	{
+		return dictRawData->isValid() && mdbDirEntry.compare(*dictRawData);
+	}
+
+
+
+	void MDbData::addUnknow2Structure(std::ifstream& stream)
 	{
 		BaseElement* baseElement = new BaseElement(stream, *this);
 
@@ -378,21 +315,21 @@ namespace E2E
 				e2edata.takeRawElement(baseElement);
 				break;
 			case DataClass::Patient:
-				getPatient(e2edata).takeRawElement(baseElement);
+				getPatient().takeRawElement(baseElement);
 				break;
 			case DataClass::Study:
-				getStudy(e2edata).takeRawElement(baseElement);
+				getStudy().takeRawElement(baseElement);
 				break;
 			case DataClass::Series:
-				getSeries(e2edata).takeRawElement(baseElement);
+				getSeries().takeRawElement(baseElement);
 				break;
 			case DataClass::Image:
-				getBScan(e2edata).takeRawElement(baseElement);
+				getBScan().takeRawElement(baseElement);
 				break;
 		}
 	}
 
-	bool MDbData::addUnknowStringList2Structure(std::ifstream& stream, DataRoot& e2edata)
+	bool MDbData::addUnknowStringList2Structure(std::ifstream& stream)
 	{
 		StringListElement* baseElement = nullptr;
 		try
@@ -401,7 +338,7 @@ namespace E2E
 		}
 		catch(...)
 		{
-			MDbData::addUnknow2Structure(stream, e2edata);
+			MDbData::addUnknow2Structure(stream);
 			return false;
 		}
 
@@ -412,16 +349,16 @@ namespace E2E
 				e2edata.takeStringListElement(baseElement);
 				break;
 			case DataClass::Patient:
-				getPatient(e2edata).takeStringListElement(baseElement);
+				getPatient().takeStringListElement(baseElement);
 				break;
 			case DataClass::Study:
-				getStudy(e2edata).takeStringListElement(baseElement);
+				getStudy().takeStringListElement(baseElement);
 				break;
 			case DataClass::Series:
-				getSeries(e2edata).takeStringListElement(baseElement);
+				getSeries().takeStringListElement(baseElement);
 				break;
 			case DataClass::Image:
-				getBScan(e2edata).takeStringListElement(baseElement);
+				getBScan().takeStringListElement(baseElement);
 				break;
 		}
 		return true;
@@ -430,57 +367,57 @@ namespace E2E
 
 	int MDbData::getSubId() const
 	{
-		return getMDbDataRawData(rawData)->subID;
+		return dictRawData->getRaw().subID;
 	}
 
 	int MDbData::getImageId() const
 	{
-		return getMDbDataRawData(rawData)->imageID;
+		return dictRawData->getRaw().imageID;
 	}
 
 	int MDbData::getSeriesId() const
 	{
-		return getMDbDataRawData(rawData)->seriesID;
+		return dictRawData->getRaw().seriesID;
 	}
 
 	int MDbData::getStudyId() const
 	{
-		return getMDbDataRawData(rawData)->studyUID;
+		return dictRawData->getRaw().studyID;
 	}
 
 	int MDbData::getPatientId() const
 	{
-		return getMDbDataRawData(rawData)->patientID;
+		return dictRawData->getRaw().patientID;
 	}
 
 	std::size_t MDbData::getDataAdress() const
 	{
 
-		return getMDbDataRawData(rawData)->dataAddress;
+		return dictRawData->getRaw().dataAddress;
 	}
 
 	std::size_t MDbData::getDataLength() const
 	{
-		return getMDbDataRawData(rawData)->dataLengt;
+		return dictRawData->getRaw().dataLengt;
 	}
 
 
-	BScan& MDbData::getBScan(DataRoot& e2edata)
+	BScan& MDbData::getBScan()
 	{
 		return e2edata.getPatient(getPatientId()).getStudy(getStudyId()).getCScan(getSeriesId()).getBScan(getImageId());
 	}
 
-	Series& MDbData::getSeries(DataRoot& e2edata)
+	Series& MDbData::getSeries()
 	{
 		return e2edata.getPatient(getPatientId()).getStudy(getStudyId()).getCScan(getSeriesId());
 	}
 
-	Study& MDbData::getStudy(DataRoot& e2edata)
+	Study& MDbData::getStudy()
 	{
 		return e2edata.getPatient(getPatientId()).getStudy(getStudyId());
 	}
 
-	Patient& MDbData::getPatient(DataRoot& e2edata)
+	Patient& MDbData::getPatient()
 	{
 		return e2edata.getPatient(getPatientId());
 	}
@@ -488,8 +425,23 @@ namespace E2E
 
 	int MDbData::getTypeValue() const
 	{
-		return getMDbDataRawData(rawData)->type;
+		return dictRawData->getRaw().type;
 	}
+
+
+	bool MDbData::evaluate(std::ifstream& stream, DataRoot& e2edata, const DictEntryRawData& mdbDirEntry, const Options& options)
+	{
+		try
+		{
+			MDbData data(options, stream, e2edata, mdbDirEntry);
+		}
+		catch(...)
+		{
+			return false;
+		}
+		return true;
+	}
+
 
 	
 }

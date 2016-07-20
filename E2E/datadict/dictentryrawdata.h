@@ -28,7 +28,7 @@ namespace E2E
 			int32_t  studyID     ; // .edb
 			int32_t  seriesID    ; // .sdb
 			int32_t  imageID     ;
-			int16_t  imageSubID  ;
+			int16_t  subID       ;
 
 			uint16_t unknown     ; // not included in checksum, unknown why
 			uint32_t type        ;
@@ -50,6 +50,11 @@ namespace E2E
 
 		const Raw& getRaw()                               const  { return rawdata; }
 		const DataRawHeader& getDataRawHeader()           const  { return dataRawHeader; }
+
+		bool compare(const DictEntryRawData& other) const;
+
+		static const std::size_t dirEntryHeaderSize  = sizeof(Raw);
+		static const std::size_t dataEntryHeaderSize = sizeof(DataRawHeader) + sizeof(Raw);
 
 	private:
 		Raw       rawdata           ;

@@ -39,10 +39,7 @@ namespace E2E
 		const std::vector<DictEntryRawData>& vec = dir.getIndexVec();
 
 		for(const DictEntryRawData& dirEntry : vec)
-		{
-			MDbData data(options);
-			data.evaluate(stream, dataRoot, dirEntry);
-		}
+			MDbData::evaluate(stream, dataRoot, dirEntry, options);
 
 		return true;
 	}

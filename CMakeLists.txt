@@ -23,6 +23,7 @@ file(GLOB sources "${CMAKE_CURRENT_SOURCE_DIR}/E2E/**/*.cpp")
 list(APPEND sources ${sources_b})
 
 
+
 if(compiler_flags_debug)
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${compiler_flags_debug}")
 endif()

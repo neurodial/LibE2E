@@ -2,7 +2,7 @@
 
 #include "../streamhelper.h"
 #include <cassert>
-
+#include <cstring>
 
 E2E::DictEntryRawData::DictEntryRawData(std::ifstream& stream, uint32_t addr, E2E::DictEntryRawData::EntryType t)
 : type(t)
@@ -40,7 +40,7 @@ void E2E::DictEntryRawData::calcChecksumDir()
 	calculatedChecksum += rawdata.studyID    ; // .edb
 	calculatedChecksum += rawdata.seriesID   ; // .sdb
 	calculatedChecksum += rawdata.imageID    ;
-	calculatedChecksum += rawdata.imageSubID ;
+	calculatedChecksum += rawdata.subID      ;
 
 	// calculatedChecksum += rawdata.unknown    ;
 	calculatedChecksum += rawdata.type;
@@ -53,7 +53,7 @@ bool E2E::DictEntryRawData::validIndexEntry() const
 	switch(type)
 	{
 		case EntryType::Data:
-			return rawdata.dataAddress == foundAddr;
+			return rawdata.dataAddress == foundAddr && (std::memcmp(dataRawHeader.mdbdataStr, "MDbData", 8) == 0);
 		case EntryType::Dir:
 			return rawdata.indexAddress == foundAddr;
 	}
@@ -61,6 +61,25 @@ bool E2E::DictEntryRawData::validIndexEntry() const
 
 	return false; // for release modus and prevent compiler warniung
 }
+
+bool E2E::DictEntryRawData::compare(const E2E::DictEntryRawData& other) const
+{
+	return other.rawdata.indexAddress == rawdata.indexAddress
+	    && other.rawdata.dataAddress  == rawdata.dataAddress
+	    && other.rawdata.dataLengt    == rawdata.dataLengt
+	    && other.rawdata.zero         == rawdata.zero
+	    && other.rawdata.patientID    == rawdata.patientID
+	    && other.rawdata.studyID      == rawdata.studyID
+	    && other.rawdata.seriesID     == rawdata.seriesID
+	    && other.rawdata.imageID      == rawdata.imageID
+	    && other.rawdata.subID        == rawdata.subID
+
+	//    && other.rawdata.unknown      == rawdata.unknown;
+	    && other.rawdata.type         == rawdata.type;
+	//    && other.rawdata.checksum     == rawdata.checksum*/
+}
+
+
 
 void E2E::DictEntryRawData::print(std::ostream& stream) const
 {
@@ -72,7 +91,7 @@ void E2E::DictEntryRawData::print(std::ostream& stream) const
 	stream << "studyID     : " << rawdata.studyID      << '\n';
 	stream << "seriesID    : " << rawdata.seriesID     << '\n';
 	stream << "imageID     : " << rawdata.imageID      << '\n';
-	stream << "imageSubID  : " << rawdata.imageSubID   << '\n';
+	stream << "subID       : " << rawdata.subID        << '\n';
 	stream << "unknown     : " << rawdata.unknown      << '\n';
 	stream << "type        : " << rawdata.type         << '\n';
 	stream << "checksum    : " << rawdata.checksum     << '\n';

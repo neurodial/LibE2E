@@ -19,22 +19,34 @@ namespace E2E
 	class MDbData
 	{
 		DictEntryRawData*                    dictRawData = nullptr;
+		const DictEntryRawData&              mdbDirEntry;
+		E2E::DataRoot&                       e2edata;
 
-		void addUnknow2Structure(std::ifstream& stream, E2E::DataRoot& e2edata);
-		bool addUnknowStringList2Structure(std::ifstream& stream, DataRoot& e2edata);
+		void addUnknow2Structure(std::ifstream& stream);
+		bool addUnknowStringList2Structure(std::ifstream& stream);
 
 		const Options& options;
-	public:
 		enum class DataClass { General, Patient, Study, Series, Image  };
 
-		MDbData(const E2E::Options& options);
+		MDbData(const E2E::Options& options, std::ifstream& stream, E2E::DataRoot& e2edata, const E2E::DictEntryRawData& mdbDirEntry);
 		~MDbData();
 
-		static const std::size_t headerSize = 60;
-
 		bool isValid(const DictEntryRawData& mdbDirEntry);
-		
-		bool evaluate( std::ifstream& stream, E2E::DataRoot& e2edata, const E2E::DictEntryRawData& mdbDirEntry);
+
+
+		Patient&  getPatient();
+		Study  &  getStudy  ();
+		Series &  getSeries ();
+		BScan  &  getBScan  ();
+
+
+	public:
+		static bool evaluate(std::ifstream& stream, E2E::DataRoot& e2edata, const E2E::DictEntryRawData& mdbDirEntry, const E2E::Options& options);
+
+		std::size_t getDataLength() const;
+		std::size_t getDataAdress() const;
+		int getTypeValue() const;
+
 
 		DataClass getDataClass() const;
 		int getSubId()      const;
@@ -43,19 +55,10 @@ namespace E2E
 		int getStudyId()    const;
 		int getPatientId()  const;
 
-
-		Patient&  getPatient(DataRoot& e2edata);
-		Study  &  getStudy  (DataRoot& e2edata);
-		Series &  getSeries (DataRoot& e2edata);
-		BScan  &  getBScan  (DataRoot& e2edata);
+		const E2E::DictEntryRawData& getDirEntry()               { return mdbDirEntry; }
+		const E2E::DictEntryRawData& getDataHeader()             { return *dictRawData; }
 
 		const Options& getOptions() const                        { return options; }
-
-
-		std::size_t getDataLength() const;
-		std::size_t getDataAdress() const;
-
-		int getTypeValue() const;
 	};
 	
 };
