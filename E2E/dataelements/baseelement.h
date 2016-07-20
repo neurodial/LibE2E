@@ -4,12 +4,17 @@
 
 namespace E2E
 {
+
+	class DictEntryRawData;
 	class MDbData;
 
 	class BaseElement
 	{
 		char*                               rawData       = nullptr;
 		std::size_t                         rawDataLength = 0      ;
+
+		const DictEntryRawData*             dictEntry  = nullptr;
+		const DictEntryRawData*             dataHeader = nullptr;
 
 		// TODO
 		int type       = 0;
@@ -31,6 +36,9 @@ namespace E2E
 		int getType()                  const                    { return type;   }
 
 		int getSubID()                 const                    { return subID;  }
+
+		const DictEntryRawData* getDictEntry () const           { return dictEntry ; }
+		const DictEntryRawData* getDataHeader() const           { return dataHeader; }
 	};
 }
 

@@ -56,6 +56,8 @@ namespace E2E
 		static const std::size_t dirEntryHeaderSize  = sizeof(Raw);
 		static const std::size_t dataEntryHeaderSize = sizeof(DataRawHeader) + sizeof(Raw);
 
+		EntryType getType() const                                { return type; }
+
 	private:
 		Raw       rawdata           ;
 		DataRawHeader dataRawHeader ;

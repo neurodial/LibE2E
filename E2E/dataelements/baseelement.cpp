@@ -1,6 +1,7 @@
 #include "baseelement.h"
 
 #include "../datadict/e2emdbdata.h"
+#include "../datadict/dictentryrawdata.h"
 #include "../e2edata.h"
 
 namespace E2E
@@ -21,6 +22,9 @@ namespace E2E
 			rawDataLength = readLengt; // data.getDataLength(); //
 
 			stream.seekg(pos);
+
+			dictEntry  = new DictEntryRawData(data.getDirEntry());
+			dataHeader = new DictEntryRawData(data.getDataHeader());
 		}
 		// interpret = data.
 
@@ -33,6 +37,9 @@ namespace E2E
 	BaseElement::~BaseElement()
 	{
 		delete[] rawData;
+
+		delete dictEntry;
+		delete dataHeader;
 	}
 
 
