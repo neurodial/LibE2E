@@ -177,6 +177,12 @@ namespace E2E
 					else
 						std::cerr << "SegmentationData outsite from a image\n";
 					break;
+				case 0x2328:
+					// std::cout << "Gerätename?";
+					DEBUG_OUT("PTC?");
+					addUnknowStringList2Structure(stream);
+					rawData = false;
+					break;
 				case 0x2329:
 					// std::cout << "Gerätename?";
 					DEBUG_OUT("Gerätename");

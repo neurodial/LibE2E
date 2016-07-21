@@ -4,6 +4,8 @@
 #include "../datadict/dictentryrawdata.h"
 #include "../e2edata.h"
 
+#include <iostream>
+
 namespace E2E
 {
 
@@ -12,7 +14,7 @@ namespace E2E
 		if(data.getOptions().readRawData)
 		{
 			std::size_t pos    = stream.tellg();
-			std::size_t readLengt  = data.getDataLength();// +76; // TODO
+			std::size_t readLengt  = data.getDataLength();
 			std::size_t readAdress = data.getDataAdress() + 60;
 
 			rawData = new char[readLengt];
@@ -25,6 +27,14 @@ namespace E2E
 
 			dictEntry  = new DictEntryRawData(data.getDirEntry());
 			dataHeader = new DictEntryRawData(data.getDataHeader());
+			
+			/*
+			uint32_t checksum = 0;
+			for(char* it = rawData; it<rawData+readLengt; ++it)
+				checksum += *it;
+			
+			std::cout << '\t' << checksum << '\t' << (checksum - dataHeader->getDataRawHeader().undef - 0xedb9a879);
+			*/
 		}
 		// interpret = data.
 
