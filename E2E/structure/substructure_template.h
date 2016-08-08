@@ -10,7 +10,11 @@ namespace E2E
 	template<typename Type, typename IndexType = int>
 	class SubstructureTemplate : public BaseStructure
 	{
+		SubstructureTemplate(const SubstructureTemplate&)            = delete;
+		SubstructureTemplate& operator=(const SubstructureTemplate&) = delete;
 	public:
+		SubstructureTemplate()                                       = default;
+		
 		typedef std::pair<const IndexType, Type*>        SubstructurePair;
 		typedef std::map<IndexType, Type*>               SubstructureMap;
 		typedef typename SubstructureMap::iterator       SubstructureIterator;
