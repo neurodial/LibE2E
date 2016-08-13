@@ -7,8 +7,8 @@
 
 #include "../structure/root.h"
 
-#define DEBUG_OUT(A) std::cout << A;
-// #define DEBUG_OUT(A)
+// #define DEBUG_OUT(A) std::cout << A;
+#define DEBUG_OUT(A) ;
 
 #include "../streamhelper.h"
 #include "../dataelements/baseelement.h"
@@ -18,6 +18,7 @@
 #include "../dataelements/patientdataelement.h"
 #include "../dataelements/textelement.h"
 #include "../dataelements/bscansmetadataelement.h"
+#include <E2E/dataelements/bscanmetadataelement.h>
 
 #include "../e2edata.h"
 
@@ -48,11 +49,12 @@ namespace E2E
 		if(mdbDirEntry.getRaw().dataLengt <= 4) // TODO: prüfe dateigröße gegen speicheradresse
 			return;
 
+		std::string a;
 		stream.seekg(mdbDirEntry.getRaw().dataAddress);
 
 
 		dictRawData = new DictEntryRawData(stream, stream.tellg(), DictEntryRawData::EntryType::Data); // TODO: move tellg to DictEntryRawData class? complexity?
-		const DictEntryRawData::Raw& data = dictRawData->getRaw();
+		// const DictEntryRawData::Raw& data = dictRawData->getRaw();
 
 		// DEBUG_OUT(mdbDirEntry.validChecksum() << '\t' << mdbDirEntry.validIndexEntry() << '\t');
 		// DEBUG_OUT(dictRawData->validChecksum() << '\t' << dictRawData->validIndexEntry() << '\t');
@@ -212,6 +214,16 @@ namespace E2E
 					DEBUG_OUT("OCT");
 					addUnknowStringList2Structure(stream);
 					rawData = false;
+					break;
+				case 0x2714:
+					if(getDataClass() == DataClass::Image)
+					{
+						BScanMetaDataElement* metaData = new BScanMetaDataElement(stream, *this);
+						getBScan().takeBScanMetaDataElement(metaData);
+						rawData = false;
+					}
+					// std::cout << "OCT?";
+					DEBUG_OUT("BScanMetaData");
 					break;
 				case 0x3a:
 					// std::cout << "ua. Operatorname?";

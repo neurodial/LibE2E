@@ -4,7 +4,7 @@ project(libe2e)
 find_package(Boost 1.40 COMPONENTS filesystem system REQUIRED)
 find_package(OpenCV REQUIRED)
 
-include_directories(${CMAKE_SOURCE_DIR}/src/)
+include_directories(${CMAKE_SOURCE_DIR}/)
 include_directories(${Boost_INCLUDE_DIRS})
 
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -23,7 +23,6 @@ file(GLOB sources "${CMAKE_CURRENT_SOURCE_DIR}/E2E/**/*.cpp")
 list(APPEND sources ${sources_b})
 
 
-
 if(compiler_flags_debug)
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${compiler_flags_debug}")
 endif()
@@ -38,6 +37,10 @@ endif()
 
 add_library(e2e ${sources})
 
+
+IF( CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" )
+  SET_TARGET_PROPERTIES(e2e PROPERTIES COMPILE_FLAGS "-fPIC")
+ENDIF( CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" )
 
 add_executable(libe2e_test main.cpp)
 target_link_libraries(libe2e_test e2e ${OpenCV_LIBRARIES})

@@ -3,6 +3,7 @@
 
 #include "../dataelements/image.h"
 #include "../dataelements/segmentationdata.h"
+#include "../dataelements/bscanmetadataelement.h"
 
 E2E::BScan::~BScan()
 {
@@ -40,4 +41,10 @@ std::size_t E2E::BScan::getImageRows() const
 	if(bscanImage)
 		return bscanImage->getImageRows();
 	return 0;
+}
+
+void E2E::BScan::takeBScanMetaDataElement(E2E::BScanMetaDataElement* metaData)
+{
+	delete bScanMetaDataElement;
+	bScanMetaDataElement = metaData;
 }
