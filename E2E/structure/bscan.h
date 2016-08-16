@@ -7,8 +7,9 @@
 namespace E2E
 {
 
-class BScanMetaDataElement;
+	class BScanMetaDataElement;
 
+	class ImageRegistration;
 	class SegmentationData;
 	class Image;
 
@@ -52,6 +53,11 @@ class BScanMetaDataElement;
 
 		const BScanMetaDataElement* getBScanMetaDataElement() const { return bScanMetaDataElement; }
 		void takeBScanMetaDataElement(BScanMetaDataElement* metaData);
+
+
+
+		const ImageRegistration* getImageRegistrationData() const { return imageRegistrationData; }
+		void takeImageRegistrationData(ImageRegistration* ele);
 	private:
 		Image* bscanImage = nullptr;
 		std::vector<Image*> pixmaps;
@@ -59,6 +65,7 @@ class BScanMetaDataElement;
 		SegmentationMap segmentationMap;
 		BScanMetaDataElement* bScanMetaDataElement = nullptr;
 		// std::vector<Segmentierungsdaten>
+		ImageRegistration*     imageRegistrationData = nullptr;
 
 	};
 

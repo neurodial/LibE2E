@@ -7,8 +7,8 @@
 
 #include "../structure/root.h"
 
-// #define DEBUG_OUT(A) std::cout << A;
-#define DEBUG_OUT(A) ;
+#define DEBUG_OUT(A) std::cout << A;
+// #define DEBUG_OUT(A) ;
 
 #include "../streamhelper.h"
 #include "../dataelements/baseelement.h"
@@ -19,6 +19,7 @@
 #include "../dataelements/textelement.h"
 #include "../dataelements/bscansmetadataelement.h"
 #include <E2E/dataelements/bscanmetadataelement.h>
+#include <E2E/dataelements/imageregistration.h>
 
 #include "../e2edata.h"
 
@@ -54,7 +55,7 @@ namespace E2E
 
 
 		dictRawData = new DictEntryRawData(stream, stream.tellg(), DictEntryRawData::EntryType::Data); // TODO: move tellg to DictEntryRawData class? complexity?
-		// const DictEntryRawData::Raw& data = dictRawData->getRaw();
+		const DictEntryRawData::Raw& data = dictRawData->getRaw();
 
 		// DEBUG_OUT(mdbDirEntry.validChecksum() << '\t' << mdbDirEntry.validIndexEntry() << '\t');
 		// DEBUG_OUT(dictRawData->validChecksum() << '\t' << dictRawData->validIndexEntry() << '\t');
@@ -149,36 +150,6 @@ namespace E2E
 					DEBUG_OUT("Spectralis OCT");
 					// e2edata->imageMetaData.readData(stream);
 					break;
-				case 0x271d: // Bildmetadaten
-					DEBUG_OUT("Bildmetadaten");
-					if(getDataClass() == DataClass::Series)
-					{
-						BScansMetaDataElement* metaData;
-						try
-						{
-							metaData = new BScansMetaDataElement(stream, *this);
-							getSeries().takeBScansMetaData(metaData);
-							rawData = false;
-						}
-						catch(...)
-						{
-							std::cerr << "BScansMetaDataElement can't set\n";
-							delete metaData;
-						}
-					}
-					// e2edata->imageMetaData.readData(stream);
-					break;
-				case 0x2723: // Segentierungsdaten
-					DEBUG_OUT("Segentierungsdaten");
-					if(getDataClass() == DataClass::Image)
-					{
-						SegmentationData* segData = new SegmentationData(stream, *this);
-						rawData = false;
-						getBScan().takeSegmentationData(segData);
-					}
-					else
-						std::cerr << "SegmentationData outsite from a image\n";
-					break;
 				case 0x2328:
 					// std::cout << "Gerätename?";
 					DEBUG_OUT("PTC?");
@@ -224,6 +195,55 @@ namespace E2E
 					}
 					// std::cout << "OCT?";
 					DEBUG_OUT("BScanMetaData");
+					break;
+				case 0x271c: // Image registration
+					DEBUG_OUT("Bildregistrierung");
+					if(getDataClass() == DataClass::Image)
+					{
+						ImageRegistration* registration;
+						try
+						{
+							registration = new ImageRegistration(stream, *this);
+							getBScan().takeImageRegistrationData(registration);
+							rawData = false;
+						}
+						catch(...)
+						{
+							std::cerr << "BScansMetaDataElement can't set\n";
+							delete registration;
+						}
+					}
+					// e2edata->imageMetaData.readData(stream);
+					break;
+				case 0x271d: // Bildmetadaten
+					DEBUG_OUT("Bildmetadaten");
+					if(getDataClass() == DataClass::Series)
+					{
+						BScansMetaDataElement* metaData;
+						try
+						{
+							metaData = new BScansMetaDataElement(stream, *this);
+							getSeries().takeBScansMetaData(metaData);
+							rawData = false;
+						}
+						catch(...)
+						{
+							std::cerr << "BScansMetaDataElement can't set\n";
+							delete metaData;
+						}
+					}
+					// e2edata->imageMetaData.readData(stream);
+					break;
+				case 0x2723: // Segentierungsdaten
+					DEBUG_OUT("Segentierungsdaten");
+					if(getDataClass() == DataClass::Image)
+					{
+						SegmentationData* segData = new SegmentationData(stream, *this);
+						rawData = false;
+						getBScan().takeSegmentationData(segData);
+					}
+					else
+						std::cerr << "SegmentationData outsite from a image\n";
 					break;
 				case 0x3a:
 					// std::cout << "ua. Operatorname?";

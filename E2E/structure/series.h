@@ -8,6 +8,7 @@
 namespace E2E
 {
 
+
 	class BScansMetaDataElement;
 	class Image;
 	class TextElement;
