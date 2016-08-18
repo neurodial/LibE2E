@@ -3,6 +3,8 @@
 #include <fstream>
 #include <ostream>
 
+#include "../e2e_packhelper.h"
+
 namespace E2E
 {
 
@@ -17,6 +19,7 @@ namespace E2E
 			uint32_t undef;
 		};
 
+		PACKSTRUCT(
 		struct Raw
 		{
 			uint32_t indexAddress;
@@ -33,7 +36,7 @@ namespace E2E
 			uint16_t unknown     ; // not included in checksum, unknown why
 			uint32_t type        ;
 			uint32_t checksum    ; // sum of block + 0x789ABCDF
-		} __attribute__((packed));
+		});
 
 
 		DictEntryRawData(std::ifstream& stream, uint32_t linkAddr, EntryType t);

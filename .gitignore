@@ -1,0 +1,71 @@
+## Latex files
+*.aux
+*.glo
+*.idx
+*.log
+*.toc
+*.ist
+*.acn
+*.acr
+*.alg
+*.bbl
+*.blg
+*.tui
+*.top
+*.tmp
+*.mp
+*.dvi
+*.glg
+*.gls
+*.ilg
+*.ind
+*.lof
+*.lot
+*.maf
+*.mtc
+*.mtc1
+*.out
+*.synctex.gz
+*.pdf
+*.nav
+*.snm
+
+## Matlab files
+# Windows default autosave extension
+*.asv
+
+# Compiled MEX binaries (all platforms)
+*.mex*
+
+# Simulink Code Generation
+slprj/
+
+## Octave files
+# Session info
+octave-workspace
+
+## Other files
+# KWrite swap files
+*-swp
+
+# Mac IDE
+*.swp
+*~
+*(Autosaved).rtfd/
+Backup[ ]of[ ]*.pages/
+Backup[ ]of[ ]*.key/
+Backup[ ]of[ ]*.numbers/
+
+*.backup
+
+# Mac Thumbnails
+._*
+
+# Mac finder files and hidden folders
+.DS_Store
+.AppleDouble
+.LSOverride
+
+/build
+/release
+.kdev4

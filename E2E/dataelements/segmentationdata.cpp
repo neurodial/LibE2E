@@ -6,11 +6,12 @@
 
 #include <iostream>
 
+#include "../e2e_packhelper.h"
 
 namespace
 {
 
-	struct SegHeader
+	PACKSTRUCT(struct SegHeader
 	{
 		// uint8_t  undef[0x40 - E2E::MDbData::headerSize];
 		uint32_t u0; // always 0
@@ -18,7 +19,7 @@ namespace
 		uint32_t type;  // ?
 		uint32_t size;
 		uint32_t zeros[5]; // unknow, always zero
-	} __attribute__((packed));
+	});
 
 }
 

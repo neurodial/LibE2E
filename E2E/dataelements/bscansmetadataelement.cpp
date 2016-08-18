@@ -4,18 +4,20 @@
 #include "../datadict/e2emdbdata.h"
 
 
+#include "../e2e_packhelper.h"
 #include <iostream>
 
 namespace
 {
 
+	PACKSTRUCT(
 	struct Header
 	{
 		uint32_t undef[3];
 		uint32_t numImages;
-	} __attribute__((packed));;
+	});
 
-	struct RawData
+	PACKSTRUCT(struct RawData
 	{
 		uint32_t undef[12];
 		float x1;
@@ -23,7 +25,7 @@ namespace
 		float x2;
 		float y2;
 		uint32_t undef2[5];
-	} __attribute__((packed));
+	});
 
 	void copyBScansData(E2E::BScansMetaDataElement::BScansData& data, const RawData& rawData)
 	{

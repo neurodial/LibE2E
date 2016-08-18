@@ -5,15 +5,18 @@
 
 #include <algorithm>
 
+#include "../e2e_packhelper.h"
+
 #include <iostream>
 
 namespace
 {
+	PACKSTRUCT(
 	struct StringListHeader
 	{
 		uint32_t stringNumbers;
 		uint32_t stringSize;
-	} __attribute__((packed));
+	});
 }
 
 

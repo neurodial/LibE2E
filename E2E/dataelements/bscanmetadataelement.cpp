@@ -3,11 +3,14 @@
 #include "../streamhelper.h"
 #include "../datadict/e2emdbdata.h"
 
+#include "../e2e_packhelper.h"
+
 
 #include <iostream>
 
 namespace
 {
+	PACKSTRUCT(
 	struct MetaDataStruct
 	{
 		uint32_t unknown1;
@@ -17,7 +20,7 @@ namespace
 		float    posY1;
 		float    posX2;
 		float    posY2;
-	} __attribute__((packed));
+	});
 
 	void copyBScansData(const MetaDataStruct& mds, E2E::BScanMetaDataElement::BScanData& bsd)
 	{

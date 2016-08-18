@@ -9,17 +9,18 @@
 #include "../datadict/e2emdbdata.h"
 #include "../datadict/dictentryrawdata.h"
 
+#include "../e2e_packhelper.h"
 
 namespace
 {
-	struct ImageHeader
+	PACKSTRUCT(struct ImageHeader
 	{
 		uint8_t  undef[0x40 - E2E::DictEntryRawData::dataEntryHeaderSize];
 		uint32_t u1;
 		uint32_t u2;
 		uint32_t breite;
 		uint32_t hoehe;
-	} __attribute__((packed));
+	});
 }
 
 namespace E2E
