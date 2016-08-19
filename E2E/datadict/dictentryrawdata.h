@@ -56,8 +56,8 @@ namespace E2E
 
 		bool compare(const DictEntryRawData& other) const;
 
-		static const std::size_t dirEntryHeaderSize  = sizeof(Raw);
-		static const std::size_t dataEntryHeaderSize = sizeof(DataRawHeader) + sizeof(Raw);
+		constexpr static const std::size_t dirEntryHeaderSize  = sizeof(Raw);
+		constexpr static const std::size_t dataEntryHeaderSize = sizeof(DataRawHeader) + sizeof(Raw);
 
 		EntryType getType() const                                { return type; }
 

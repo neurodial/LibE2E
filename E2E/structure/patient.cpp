@@ -2,6 +2,7 @@
 
 #include "../dataelements/patientdataelement.h"
 #include "../dataelements/textelement.h"
+#include <E2E/dataelements/patimage_2335.h>
 
 
 namespace E2E
@@ -11,6 +12,9 @@ namespace E2E
 	{
 		delete patientData;
 		delete patientUID;
+
+		delete patImageL;
+		delete patImageR;
 	}
 
 
@@ -26,6 +30,28 @@ namespace E2E
 		if(patientUID)
 			throw "multible PatientUID";
 		patientUID = uid;
+	}
+
+	void Patient::takePatImage_2335(PatImage_2335* img)
+	{
+		switch(img->getType())
+		{
+			case 'L':
+				if(!patImageL)
+					patImageL = img;
+				else
+					throw "mutible patImageL";
+				break;
+			case 'R':
+				if(!patImageR)
+					patImageR = img;
+				else
+					throw "mutible patImageR";
+				break;
+			default:
+				throw "unknown patImage Type";
+		}
+
 	}
 
 

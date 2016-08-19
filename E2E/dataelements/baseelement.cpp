@@ -13,9 +13,9 @@ namespace E2E
 	{
 		if(data.getOptions().readRawData)
 		{
-			std::size_t pos    = stream.tellg();
+			std::size_t pos        = stream.tellg();
 			std::size_t readLengt  = data.getDataLength();
-			std::size_t readAdress = data.getDataAdress() + 60;
+			std::size_t readAdress = data.getDataAdress() + DictEntryRawData::dataEntryHeaderSize;
 
 			rawData = new char[readLengt];
 
@@ -38,10 +38,11 @@ namespace E2E
 		}
 		// interpret = data.
 
-		address = data.getDataAdress();
-		length  = data.getDataLength();
-		type    = data.getTypeValue();
-		subID   = data.getSubId();
+		blockHeaderAddress = data.getDataAdress();
+		blockDataAddress   = data.getDataAdress() + DictEntryRawData::dataEntryHeaderSize;
+		length             = data.getDataLength();
+		type               = data.getTypeValue();
+		subID              = data.getSubId();
 	}
 
 	BaseElement::~BaseElement()

@@ -20,6 +20,7 @@
 #include "../dataelements/bscansmetadataelement.h"
 #include <E2E/dataelements/bscanmetadataelement.h>
 #include <E2E/dataelements/imageregistration.h>
+#include <E2E/dataelements/patimage_2335.h>
 
 #include "../e2edata.h"
 
@@ -185,6 +186,23 @@ namespace E2E
 					DEBUG_OUT("OCT");
 					addUnknowStringList2Structure(stream);
 					rawData = false;
+					break;
+				case 0x2335:
+					if(getDataClass() == DataClass::Patient)
+					{
+						PatImage_2335* image = new PatImage_2335(stream, *this);
+						try
+						{
+							getPatient().takePatImage_2335(image);
+							rawData = false;
+						}
+						catch(...)
+						{
+							delete image;
+							std::cerr << "PatImage_2335 cant set\n";
+						}
+					}
+					DEBUG_OUT("PatImage");
 					break;
 				case 0x2714:
 					if(getDataClass() == DataClass::Image)

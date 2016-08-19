@@ -17,12 +17,13 @@ namespace E2E
 		const DictEntryRawData*             dataHeader = nullptr;
 
 		// TODO
-		int type       = 0;
-		int interpret  = 0;
-		int address    = 0;
-		int length     = 0;
+		int         type               = 0;
+		int         interpret          = 0;
+		std::size_t blockHeaderAddress = 0;
+		std::size_t blockDataAddress   = 0;
+		std::size_t length             = 0;
 
-		int subID      = 0;
+		int         subID              = 0;
 
 	public:
 		BaseElement(std::istream& stream, MDbData& data);
@@ -31,7 +32,8 @@ namespace E2E
 		std::size_t getRawDataLength() const                    { return rawDataLength; }
 		const char* getRawData()       const                    { return rawData;       }
 
-		int getAddress()               const                    { return address; }
+		int getBlockHeaderAddress()    const                    { return blockHeaderAddress; }
+		int getBlockDataAddress()      const                    { return blockDataAddress  ; }
 		int getNumBytes()              const                    { return length; }
 		int getType()                  const                    { return type;   }
 
