@@ -10,5 +10,4 @@
 	#error "unhandled compiler for packing struct"
 #endif
 
-	#error "unhandled compiler for packing struct"
 
