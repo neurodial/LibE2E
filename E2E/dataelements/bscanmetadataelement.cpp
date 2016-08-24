@@ -20,14 +20,31 @@ namespace
 		float    posY1;
 		float    posX2;
 		float    posY2;
+		uint32_t zero1;
+		float    unknown2;
+		float    scaleY; // ?
+		float    unknown3One;
+		uint32_t zero2;
+		float    unknown4[2];
+		uint32_t zero3;
+		uint32_t imgSizeWidth; // redunanz?
+		uint32_t numImages;
+		uint32_t aktImage;
 	});
 
 	void copyBScansData(const MetaDataStruct& mds, E2E::BScanMetaDataElement::BScanData& bsd)
 	{
-		bsd.x1 = mds.posX1;
-		bsd.y1 = mds.posY1;
-		bsd.x2 = mds.posX2;
-		bsd.y2 = mds.posY2;
+		bsd.x1           = mds.posX1       ;
+		bsd.y1           = mds.posY1       ;
+		bsd.x2           = mds.posX2       ;
+		bsd.y2           = mds.posY2       ;
+
+		bsd.aktImage     = mds.aktImage    ;
+		bsd.imgSizeWidth = mds.imgSizeWidth;
+		bsd.imgSizeX     = mds.imgSizeX    ;
+		bsd.imgSizeY     = mds.imgSizeY    ;
+		bsd.numImages    = mds.numImages   ;
+		bsd.scaleY       = mds.scaleY      ;
 	}
 }
 

@@ -15,8 +15,8 @@ namespace E2E
 	public:
 		virtual ~Study();
 
-		      Series& getCScan(int cscanId)                     { return getAndInsert(cscanId)         ; }
-		const Series& getCScan(int cscanId) const               { return *(substructureMap.at(cscanId)); }
+		      Series& getSeries(int seriesId)                   { return getAndInsert(seriesId)         ; }
+		const Series& getSeries(int seriesId) const             { return *(substructureMap.at(seriesId)); }
 
 		std::size_t getCScanSize() const                        { return substructureMap.size(); }
 		

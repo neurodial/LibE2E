@@ -85,20 +85,38 @@ namespace E2E
 				case 0x40000000:
 				{
 					DEBUG_OUT("Bild");
-					Image* image = new Image(stream, *this);
-					rawData = false;
-					switch(getDataClass())
+					try
 					{
-						case DataClass::Series:
-							getSeries().takeSloImage(image);
-							break;
-						case DataClass::Image:
-							getBScan().takeImage(image);
-							break;
-						default:
-							delete image;
-							rawData = true;
-							std::cerr << "image: unexpected data class";
+						Image* image = new Image(stream, *this);
+						rawData = false;
+						if(getSubId() == 0 && getDataClass() == DataClass::Image)
+								getSeries().takeSloImage(image);
+						else
+						{
+							switch(getDataClass())
+							{
+								case DataClass::Series:
+									getSeries().takeSloImage(image);
+									break;
+								case DataClass::Image:
+									getBScan().takeImage(image);
+									break;
+								default:
+									delete image;
+									rawData = true;
+									std::cerr << "image: unexpected data class";
+							}
+						}
+					}
+					catch(const char* c)
+					{
+						rawData = true;
+						std::cerr << c;
+					}
+					catch(...)
+					{
+						rawData = true;
+								std::cerr << "image: unexpected exception";
 					}
 
 					break;
@@ -460,12 +478,12 @@ namespace E2E
 
 	BScan& MDbData::getBScan()
 	{
-		return e2edata.getPatient(getPatientId()).getStudy(getStudyId()).getCScan(getSeriesId()).getBScan(getImageId());
+		return e2edata.getPatient(getPatientId()).getStudy(getStudyId()).getSeries(getSeriesId()).getBScan(getImageId());
 	}
 
 	Series& MDbData::getSeries()
 	{
-		return e2edata.getPatient(getPatientId()).getStudy(getStudyId()).getCScan(getSeriesId());
+		return e2edata.getPatient(getPatientId()).getStudy(getStudyId()).getSeries(getSeriesId());
 	}
 
 	Study& MDbData::getStudy()

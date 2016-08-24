@@ -27,7 +27,8 @@ namespace E2E
 
 	void BScan::takeImage(Image* image)
 	{
-		delete bscanImage;
+		if(bscanImage)
+			throw "double BScan-Image";
 		bscanImage = image;
 	}
 

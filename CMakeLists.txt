@@ -35,6 +35,7 @@ endif()
 
 
 
+
 add_library(e2e ${sources})
 
 
@@ -44,4 +45,5 @@ ENDIF( CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" )
 
 add_executable(libe2e_test main.cpp)
 target_link_libraries(libe2e_test e2e ${OpenCV_LIBRARIES})
+
 

@@ -21,8 +21,8 @@ namespace E2E
 	public:
 	    virtual ~Patient();
 
-		      Study& getStudy(int seriesId)                     { return getAndInsert(seriesId)         ; }
-		const Study& getStudy(int seriesId) const               { return *(substructureMap.at(seriesId)); }
+		      Study& getStudy(int studyId)                      { return getAndInsert(studyId)         ; }
+		const Study& getStudy(int studyId) const                { return *(substructureMap.at(studyId)); }
 
 		std::size_t getSeriesSize() const                       { return substructureMap.size(); }
 
