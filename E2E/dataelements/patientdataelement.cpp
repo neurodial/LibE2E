@@ -20,7 +20,9 @@ namespace E2E
 		StreamHelper::readString(stream, title, 10);
 		
 		char sexChar;
-		stream.seekg(startpos+101);
+		stream.seekg(startpos+93);
+		StreamHelper::readFStream(stream, &windowsBirthDate);
+		// stream.seekg(startpos+101);
 		StreamHelper::readFStream(stream, &sexChar);
 		// stream.seekg(startpos+102);
 		StreamHelper::readString(stream, id, 20);

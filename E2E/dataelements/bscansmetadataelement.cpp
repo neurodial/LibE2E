@@ -35,6 +35,7 @@ namespace
 		data.y2 = rawData.y2;
 	}
 
+	/*
 	std::ostream& operator<<(std::ostream& stream, const RawData& data)
 	{
 		for(std::size_t i=0; i<sizeof(data.undef)/sizeof(data.undef[0]); ++i)
@@ -50,6 +51,7 @@ namespace
 
 		return stream;
 	}
+	*/
 }
 
 
@@ -70,7 +72,7 @@ namespace E2E
 			RawData rawDataField;
 			StreamHelper::readFStream(stream, &(rawDataField));
 
-			std::cout << rawDataField << std::endl;
+//			std::cout << rawDataField << std::endl;
 
 			copyBScansData(dataField, rawDataField);
 			dataVec.push_back(dataField);

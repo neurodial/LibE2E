@@ -21,6 +21,7 @@ namespace E2E
 		std::string getTitle   () const                          { return title   ; }
 		std::string getId      () const                          { return id      ; }
 		Sex         getSex     () const                          { return sex     ; }
+		double      getWinBDate() const                          { return windowsBirthDate; }
 		
 		
 	private:
@@ -28,6 +29,8 @@ namespace E2E
 		std::string surname ;
 		std::string title   ;
 		std::string id      ;
+
+		double windowsBirthDate;
 
 		Sex sex = Sex::Unknown;
 

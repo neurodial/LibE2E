@@ -7,8 +7,8 @@
 
 #include "../structure/root.h"
 
-#define DEBUG_OUT(A) std::cout << A;
-// #define DEBUG_OUT(A) ;
+//#define DEBUG_OUT(A) std::cout << A;
+ #define DEBUG_OUT(A) ;
 
 #include "../streamhelper.h"
 #include "../dataelements/baseelement.h"
@@ -56,7 +56,7 @@ namespace E2E
 
 
 		dictRawData = new DictEntryRawData(stream, stream.tellg(), DictEntryRawData::EntryType::Data); // TODO: move tellg to DictEntryRawData class? complexity?
-		const DictEntryRawData::Raw& data = dictRawData->getRaw();
+		// const DictEntryRawData::Raw& data = dictRawData->getRaw();
 
 		// DEBUG_OUT(mdbDirEntry.validChecksum() << '\t' << mdbDirEntry.validIndexEntry() << '\t');
 		// DEBUG_OUT(dictRawData->validChecksum() << '\t' << dictRawData->validIndexEntry() << '\t');
@@ -371,7 +371,7 @@ namespace E2E
 	}
 
 
-	bool MDbData::isValid(const DictEntryRawData& mdbDirEntry)
+	inline bool MDbData::isValid(const DictEntryRawData& mdbDirEntry)
 	{
 		return dictRawData->isValid() && mdbDirEntry.compare(*dictRawData);
 	}
@@ -476,22 +476,22 @@ namespace E2E
 	}
 
 
-	BScan& MDbData::getBScan()
+	inline BScan& MDbData::getBScan()
 	{
 		return e2edata.getPatient(getPatientId()).getStudy(getStudyId()).getSeries(getSeriesId()).getBScan(getImageId());
 	}
 
-	Series& MDbData::getSeries()
+	inline Series& MDbData::getSeries()
 	{
 		return e2edata.getPatient(getPatientId()).getStudy(getStudyId()).getSeries(getSeriesId());
 	}
 
-	Study& MDbData::getStudy()
+	inline Study& MDbData::getStudy()
 	{
 		return e2edata.getPatient(getPatientId()).getStudy(getStudyId());
 	}
 
-	Patient& MDbData::getPatient()
+	inline Patient& MDbData::getPatient()
 	{
 		return e2edata.getPatient(getPatientId());
 	}
