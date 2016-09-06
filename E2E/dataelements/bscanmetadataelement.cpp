@@ -30,21 +30,30 @@ namespace
 		uint32_t imgSizeWidth; // redunanz?
 		uint32_t numImages;
 		uint32_t aktImage;
+		uint32_t unknown5[4];
+		uint64_t acquisitionTime;
+		uint32_t unknown6[6];
+		uint32_t numAve;
+		uint32_t unknown7[8];
+		float    imageQuality;
 	});
 
 	void copyBScansData(const MetaDataStruct& mds, E2E::BScanMetaDataElement::BScanData& bsd)
 	{
-		bsd.x1           = mds.posX1       ;
-		bsd.y1           = mds.posY1       ;
-		bsd.x2           = mds.posX2       ;
-		bsd.y2           = mds.posY2       ;
+		bsd.x1              = mds.posX1          ;
+		bsd.y1              = mds.posY1          ;
+		bsd.x2              = mds.posX2          ;
+		bsd.y2              = mds.posY2          ;
 
-		bsd.aktImage     = mds.aktImage    ;
-		bsd.imgSizeWidth = mds.imgSizeWidth;
-		bsd.imgSizeX     = mds.imgSizeX    ;
-		bsd.imgSizeY     = mds.imgSizeY    ;
-		bsd.numImages    = mds.numImages   ;
-		bsd.scaleY       = mds.scaleY      ;
+		bsd.aktImage        = mds.aktImage       ;
+		bsd.imgSizeWidth    = mds.imgSizeWidth   ;
+		bsd.imgSizeX        = mds.imgSizeX       ;
+		bsd.imgSizeY        = mds.imgSizeY       ;
+		bsd.numImages       = mds.numImages      ;
+		bsd.scaleY          = mds.scaleY         ;
+		bsd.acquisitionTime = mds.acquisitionTime;
+		bsd.numAve          = mds.numAve         ;
+		bsd.imageQuality    = mds.imageQuality   ;
 	}
 }
 

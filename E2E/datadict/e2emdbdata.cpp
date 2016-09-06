@@ -21,6 +21,7 @@
 #include <E2E/dataelements/bscanmetadataelement.h>
 #include <E2E/dataelements/imageregistration.h>
 #include <E2E/dataelements/patimage_2335.h>
+#include <E2E/dataelements/studydata.h>
 
 #include "../e2edata.h"
 
@@ -156,7 +157,7 @@ namespace E2E
 						}
 						catch(...)
 						{
-								std::cerr << "patientData can't set\n";
+							std::cerr << "patientData can't set\n";
 							delete patientData;
 						}
 					}
@@ -168,6 +169,95 @@ namespace E2E
 				case 0x0d:
 					DEBUG_OUT("Spectralis OCT");
 					// e2edata->imageMetaData.readData(stream);
+					break;
+				case 0x3a:
+					DEBUG_OUT("StudyData");
+					{
+						StudyData* studyData;
+						try
+						{
+							studyData = new StudyData(stream, *this);
+							getStudy().takeStudyData(studyData);
+							rawData = false;
+						}
+						catch(...)
+						{
+							std::cerr << "studyData can't set\n";
+							delete studyData;
+						}
+					}
+					break;
+
+				case 0x34:
+					DEBUG_OUT("PatientUID");
+
+					if(getDataClass() == DataClass::Patient)
+					{
+						TextElement* uid;
+						try
+						{
+							uid = new TextElement(stream, *this);
+							getPatient().takePatientUID(uid);
+							rawData = false;
+						}
+						catch(...)
+						{
+							std::cerr << "PatientUID can't set\n";
+							delete uid;
+						}
+					}
+					else
+						std::cerr << "PatientUID outsite from patient root\n";
+					break;
+				case 0x35:
+					// std::cout << "StudyUID?";
+					DEBUG_OUT("StudyUID");
+
+					if(getDataClass() == DataClass::Study)
+					{
+						TextElement* uid;
+						try
+						{
+							uid = new TextElement(stream, *this);
+							getStudy().takeStudyUID(uid);
+							rawData = false;
+						}
+						catch(...)
+						{
+							std::cerr << "StudyUID can't set\n";
+							delete uid;
+						}
+					}
+					else
+						std::cerr << "StudyUID outsite from patient root\n";
+					break;
+				case 0x36:
+					// std::cout << "UUID?";
+					DEBUG_OUT("UUID");
+					if(getDataClass() == DataClass::Series)
+					{
+						TextElement* uid;
+						try
+						{
+							uid = new TextElement(stream, *this);
+							getSeries().takeSeriesUID(uid);
+							rawData = false;
+						}
+						catch(...)
+						{
+							std::cerr << "SeriesUID can't set\n";
+							delete uid;
+						}
+					}
+					else
+						std::cerr << "SeriesUID outsite from patient root\n";
+					break;
+				case 0xe8:
+					// std::cout << "UUID?";
+					DEBUG_OUT("UUID");
+					break;
+				case 0xe9:
+					DEBUG_OUT("Unbekannte ID");
 					break;
 				case 0x2328:
 					// std::cout << "Gerätename?";
@@ -280,81 +370,6 @@ namespace E2E
 					}
 					else
 						std::cerr << "SegmentationData outsite from a image\n";
-					break;
-				case 0x3a:
-					// std::cout << "ua. Operatorname?";
-					DEBUG_OUT("ua. Operatorname");
-					break;
-				case 0x34:
-					DEBUG_OUT("PatientUID");
-					
-					if(getDataClass() == DataClass::Patient)
-					{
-						TextElement* uid;
-						try
-						{
-							uid = new TextElement(stream, *this);
-							getPatient().takePatientUID(uid);
-							rawData = false;
-						}
-						catch(...)
-						{
-							std::cerr << "PatientUID can't set\n";
-							delete uid;
-						}
-					}
-					else
-						std::cerr << "PatientUID outsite from patient root\n";
-					break;
-				case 0x35:
-					// std::cout << "StudyUID?";
-					DEBUG_OUT("StudyUID");
-					
-					if(getDataClass() == DataClass::Study)
-					{
-						TextElement* uid;
-						try
-						{
-							uid = new TextElement(stream, *this);
-							getStudy().takeStudyUID(uid);
-							rawData = false;
-						}
-						catch(...)
-						{
-							std::cerr << "StudyUID can't set\n";
-							delete uid;
-						}
-					}
-					else
-						std::cerr << "StudyUID outsite from patient root\n";
-					break;
-				case 0x36:
-					// std::cout << "UUID?";
-					DEBUG_OUT("UUID");
-					if(getDataClass() == DataClass::Series)
-					{
-						TextElement* uid;
-						try
-						{
-							uid = new TextElement(stream, *this);
-							getSeries().takeSeriesUID(uid);
-							rawData = false;
-						}
-						catch(...)
-						{
-							std::cerr << "SeriesUID can't set\n";
-							delete uid;
-						}
-					}
-					else
-						std::cerr << "SeriesUID outsite from patient root\n";
-					break;
-				case 0xe8:
-					// std::cout << "UUID?";
-					DEBUG_OUT("UUID");
-					break;
-				case 0xe9:
-					DEBUG_OUT("Unbekannte ID");
 					break;
 			}
 

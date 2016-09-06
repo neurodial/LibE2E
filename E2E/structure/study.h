@@ -8,10 +8,12 @@
 namespace E2E
 {
 	class TextElement;
+	class StudyData;
 
 	class Study : public SubstructureTemplate<Series>
 	{
 		TextElement*        studyUID  = nullptr;
+		StudyData*          studyData = nullptr;
 	public:
 		virtual ~Study();
 
@@ -22,7 +24,9 @@ namespace E2E
 		
 		
 		TextElement* getStudyUID() const                        { return studyUID; }
+		StudyData*   getStudyData() const                       { return studyData; }
 		void takeStudyUID(TextElement* uid);
+		void takeStudyData(StudyData* data);
 	};
 
 
