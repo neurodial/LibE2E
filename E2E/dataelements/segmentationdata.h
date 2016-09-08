@@ -19,11 +19,13 @@ namespace E2E
 
 
 	public:
+		typedef const float* pointer;
+
 		SegmentationData(std::istream& stream, MDbData& data);
 		~SegmentationData();
 
-		const float* begin() const                              { return segmentationData; }
-		const float* end() const                                { return segmentationData+numElements; }
+		pointer begin() const                              { return segmentationData; }
+		pointer end() const                                { return segmentationData+numElements; }
 
 		std::size_t size() const                                { return numElements; }
 
