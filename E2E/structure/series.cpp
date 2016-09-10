@@ -47,6 +47,13 @@ namespace E2E
 		metaDataElement = ele;
 	}
 
+	void Series::takeSloDataElement(SloDataElement* data)
+	{
+		if(sloDataElement)
+			throw "mutlible SloDataElement";
+		sloDataElement = data;
+	}
+
 
 
 }

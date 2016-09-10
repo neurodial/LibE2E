@@ -12,6 +12,7 @@ namespace E2E
 	class BScansMetaDataElement;
 	class Image;
 	class TextElement;
+	class SloDataElement;
 
 	class Series : public SubstructureTemplate<BScan>
 	{
@@ -21,6 +22,7 @@ namespace E2E
 		TextElement*        seriesUID  = nullptr;
 
 		BScansMetaDataElement* metaDataElement = nullptr;
+		SloDataElement*        sloDataElement  = nullptr;
 		// image
 	public:
 		Series();
@@ -43,6 +45,9 @@ namespace E2E
 		
 		TextElement* getSeriesUID() const                        { return seriesUID; }
 		void takeSeriesUID(TextElement* uid);
+
+		SloDataElement* getSloDataElement() const                { return sloDataElement; }
+		void takeSloDataElement(SloDataElement* data);
 	};
 
 

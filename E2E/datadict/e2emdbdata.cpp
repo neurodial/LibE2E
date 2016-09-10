@@ -22,6 +22,7 @@
 #include <E2E/dataelements/imageregistration.h>
 #include <E2E/dataelements/patimage_2335.h>
 #include <E2E/dataelements/studydata.h>
+#include <E2E/dataelements/slodataelement.h>
 
 #include "../e2edata.h"
 
@@ -370,6 +371,26 @@ namespace E2E
 					}
 					else
 						std::cerr << "SegmentationData outsite from a image\n";
+					break;
+				case 0x2729: // SloDataElement
+					DEBUG_OUT("SloDataElement");
+					if(getDataClass() == DataClass::Series)
+					{
+						SloDataElement* sloData;
+						try
+						{
+							sloData = new SloDataElement(stream, *this);
+							rawData = false;
+							getSeries().takeSloDataElement(sloData);
+						}
+						catch(...)
+						{
+							std::cerr << "SloDataElement can't set\n";
+							delete sloData;
+						}
+					}
+					else
+						std::cerr << "SloDataElement outsite from a Series\n";
 					break;
 			}
 
