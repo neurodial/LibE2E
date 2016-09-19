@@ -32,9 +32,9 @@ namespace E2E
 		std::size_t getRawDataLength() const                    { return rawDataLength; }
 		const char* getRawData()       const                    { return rawData;       }
 
-		int getBlockHeaderAddress()    const                    { return blockHeaderAddress; }
-		int getBlockDataAddress()      const                    { return blockDataAddress  ; }
-		int getNumBytes()              const                    { return length; }
+		std::size_t getBlockHeaderAddress()    const            { return blockHeaderAddress; }
+		std::size_t getBlockDataAddress()      const            { return blockDataAddress  ; }
+		std::size_t getNumBytes()              const            { return length; }
 		int getType()                  const                    { return type;   }
 
 		int getSubID()                 const                    { return subID;  }
