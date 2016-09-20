@@ -4,7 +4,7 @@
 #include <cassert>
 #include <cstring>
 
-E2E::DictEntryRawData::DictEntryRawData(std::ifstream& stream, uint32_t addr, E2E::DictEntryRawData::EntryType t)
+E2E::DictEntryRawData::DictEntryRawData(std::ifstream& stream, std::size_t addr, E2E::DictEntryRawData::EntryType t)
 : type(t)
 , foundAddr(addr)
 {

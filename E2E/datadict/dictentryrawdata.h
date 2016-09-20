@@ -39,7 +39,7 @@ namespace E2E
 		});
 
 
-		DictEntryRawData(std::ifstream& stream, uint32_t linkAddr, EntryType t);
+		DictEntryRawData(std::ifstream& stream, std::size_t linkAddr, EntryType t);
 		DictEntryRawData(const DictEntryRawData& other) = default;
 
 		void print(std::ostream& stream) const;
@@ -48,7 +48,7 @@ namespace E2E
 		bool validIndexEntry()                            const;
 		bool isValid()                                    const  { return validIndexEntry() && validChecksum(); }
 
-		uint32_t getFoundAddr()                           const  { return foundAddr; }
+		std::size_t getFoundAddr()                        const  { return foundAddr; }
 		uint32_t getCalculatedChecksum()                  const  { return calculatedChecksum; }
 
 		const Raw& getRaw()                               const  { return rawdata; }
@@ -62,11 +62,11 @@ namespace E2E
 		EntryType getType() const                                { return type; }
 
 	private:
-		Raw       rawdata           ;
-		DataRawHeader dataRawHeader ;
-		EntryType type              ;
-		uint32_t  foundAddr         ;
-		uint32_t  calculatedChecksum;
+		Raw           rawdata           ;
+		DataRawHeader dataRawHeader     ;
+		EntryType     type              ;
+		std::size_t   foundAddr         ;
+		uint32_t      calculatedChecksum;
 
 		void calcChecksumDir();
 		void calcChecksumData();
