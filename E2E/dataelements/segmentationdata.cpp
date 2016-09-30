@@ -10,7 +10,6 @@
 
 namespace
 {
-
 	PACKSTRUCT(struct SegHeader
 	{
 		// uint8_t  undef[0x40 - E2E::MDbData::headerSize];

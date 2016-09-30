@@ -7,10 +7,11 @@
 #include "../datadict/e2emdbdata.h"
 #include "../datadict/dictentryrawdata.h"
 
+#include "../e2e_packhelper.h"
 
 namespace
 {
-	struct ImageHeader
+	PACKSTRUCT(struct ImageHeader
 	{
 		uint8_t  undef1[0x1C];
 		uint8_t  type;
@@ -18,7 +19,7 @@ namespace
 		uint32_t breite   ;
 		uint32_t hoehe    ;
 		uint32_t imgOffset;
-	} __attribute__((packed));
+	});
 }
 
 namespace E2E
