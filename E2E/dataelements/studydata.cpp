@@ -16,7 +16,7 @@ namespace E2E
 		stream.seekg(startpos+6);
 		StreamHelper::readFStream(stream, &windowsStudyDate);
 		stream.seekg(startpos+16);
-		StreamHelper::readString(stream, studyOperator, 10);
+		StreamHelper::readString(stream, studyOperator, 16);
 	}
 
 	E2E::StudyData::~StudyData()
