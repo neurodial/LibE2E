@@ -323,6 +323,7 @@ namespace E2E
 					// std::cout << "OCT?";
 					DEBUG_OUT("BScanMetaData");
 					break;
+				case 0x2726: // Image registration (Stern-Scan)
 				case 0x271c: // Image registration
 					DEBUG_OUT("Bildregistrierung");
 					if(getDataClass() == DataClass::Image)

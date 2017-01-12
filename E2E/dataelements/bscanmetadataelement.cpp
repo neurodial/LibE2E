@@ -17,20 +17,23 @@ namespace
 		uint32_t imgSizeX;
 		uint32_t imgSizeY;
 		float    posX1;
-		float    posY1;
+		float    posY1;         // 0x10
 		float    posX2;
 		float    posY2;
 		uint32_t zero1;
-		float    unknown2;
+		float    unknown2;      // 0x20
 		float    scaleY; // ?
 		float    unknown3One;
 		uint32_t zero2;
-		float    unknown4[2];
+		float    unknown4[2];   // 0x30
 		uint32_t zero3;
-		uint32_t imgSizeWidth; // redunanz?
-		uint32_t numImages;
+		uint32_t imgSizeWidth;  // redunanz?
+		uint32_t numImages;     // 0x40
 		uint32_t aktImage;
-		uint32_t unknown5[4];
+		uint32_t scantype;      // scantype? 1 star, 2 circle
+		float    centerPosX;    // center pos x
+		float    centerPosY;    // 0x50 center pos y
+		uint32_t unknown5_4;
 		uint64_t acquisitionTime;
 		uint32_t unknown6[6];
 		uint32_t numAve;
@@ -54,6 +57,11 @@ namespace
 		bsd.acquisitionTime = mds.acquisitionTime;
 		bsd.numAve          = mds.numAve         ;
 		bsd.imageQuality    = mds.imageQuality   ;
+
+		bsd.centerX         = mds.centerPosX     ;
+		bsd.centerY         = mds.centerPosY     ;
+		if(mds.scantype == 2)
+			bsd.scantype = E2E::BScanMetaDataElement::ScanType::Circle;
 	}
 }
 

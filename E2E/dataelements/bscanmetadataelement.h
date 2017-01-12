@@ -14,6 +14,8 @@ namespace E2E
 	class BScanMetaDataElement : public BaseElement
 	{
 	public:
+		enum class ScanType { Unknown, Line, Star, Circle };
+
 		struct BScanData
 		{
 			double x1 = 0.0;
@@ -21,6 +23,10 @@ namespace E2E
 			double x2 = 0.0;
 			double y2 = 0.0;
 
+			double centerX = 0.0;
+			double centerY = 0.0;
+
+			ScanType scantype = ScanType::Unknown;
 
 			uint32_t imgSizeX;
 			uint32_t imgSizeY;
@@ -54,6 +60,10 @@ namespace E2E
 		uint32_t getNumAve         () const                      { return bscanData.numAve         ; }
 
 		float    getImageQuality   () const                      { return bscanData.imageQuality   ; }
+
+		ScanType getScanType       () const                      { return bscanData.scantype       ; }
+		double   getCenterX        () const                      { return bscanData.centerX        ; }
+		double   getCenterY        () const                      { return bscanData.centerY        ; }
 
 	private:
 		BScanData bscanData;
