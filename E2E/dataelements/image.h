@@ -17,6 +17,9 @@ namespace E2E
 
 		void readCVImage(std::istream& stream, cv::Mat& image, int cvFormat);
 
+		template<typename Source, typename Dest>
+		void readConvertCVImage(std::istream& stream, cv::Mat& image);
+
 		Image(cv::Mat* image, std::istream& stream, MDbData& data);
 	public:
 		Image(std::istream& stream, MDbData& data);

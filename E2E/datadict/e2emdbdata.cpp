@@ -17,6 +17,7 @@
 #include "../dataelements/stringlistelement.h"
 #include "../dataelements/patientdataelement.h"
 #include "../dataelements/textelement.h"
+#include "../dataelements/textelement16.h"
 #include "../dataelements/bscansmetadataelement.h"
 #include <E2E/dataelements/bscanmetadataelement.h>
 #include <E2E/dataelements/imageregistration.h>
@@ -170,6 +171,27 @@ namespace E2E
 				case 0x0d:
 					DEBUG_OUT("Spectralis OCT");
 					// e2edata->imageMetaData.readData(stream);
+					break;
+				case 0x11:
+					DEBUG_OUT("Diagnose");
+
+					if(getDataClass() == DataClass::Patient)
+					{
+						TextElement16* diag;
+						try
+						{
+							diag = new TextElement16(stream, *this);
+							getPatient().takeDiagnose(diag);
+							rawData = false;
+						}
+						catch(...)
+						{
+							std::cerr << "PatientUID can't set\n";
+							delete diag;
+						}
+					}
+					else
+						std::cerr << "PatientUID outsite from patient root\n";
 					break;
 				case 0x3a:
 					DEBUG_OUT("StudyData");

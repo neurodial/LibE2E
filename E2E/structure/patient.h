@@ -8,6 +8,7 @@
 namespace E2E
 {
 	class TextElement;
+	class TextElement16;
 	class PatientDataElement;
 	class PatImage_2335;
 
@@ -15,6 +16,7 @@ namespace E2E
 	{
 		PatientDataElement* patientData = nullptr;
 		TextElement*        patientUID  = nullptr;
+		TextElement16*      diagnose    = nullptr;
 
 		PatImage_2335*      patImageL   = nullptr;
 		PatImage_2335*      patImageR   = nullptr;
@@ -35,6 +37,10 @@ namespace E2E
 		void takePatImage_2335(PatImage_2335* img);
 		PatImage_2335* getPatImageR() const                     { return patImageR; }
 		PatImage_2335* getPatImageL() const                     { return patImageL; }
+
+
+		TextElement16* getDiagnose() const                        { return diagnose; }
+		void takeDiagnose(TextElement16* diag);
 	};
 
 

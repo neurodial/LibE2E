@@ -2,6 +2,7 @@
 
 #include "../dataelements/patientdataelement.h"
 #include "../dataelements/textelement.h"
+#include "../dataelements/textelement16.h"
 #include <E2E/dataelements/patimage_2335.h>
 
 
@@ -15,6 +16,8 @@ namespace E2E
 
 		delete patImageL;
 		delete patImageR;
+
+		delete diagnose;
 	}
 
 
@@ -54,5 +57,11 @@ namespace E2E
 
 	}
 
+	void Patient::takeDiagnose(TextElement16* diag)
+	{
+		if(diagnose)
+			throw "multible diagnose";
+		diagnose = diag;
+	}
 
 }

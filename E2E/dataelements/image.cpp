@@ -21,6 +21,26 @@ namespace
 		uint32_t breite;
 		uint32_t hoehe;
 	});
+
+/*
+	class ufloat16_t
+	{
+		uint16_t value;
+	public:
+		ufloat16_t(uint16_t v = 0) : value(v) {}
+		operator float() const
+		{
+			const uint16_t mantise_mask = (1<<10)-1;
+			const int mantise  =  value &  mantise_mask;
+			const int exponent = (value & ~mantise_mask) >> 10;
+			if(exponent == 0)
+				return ldexp(static_cast<float>(mantise)/static_cast<float>(1<<10), -62);
+			if(exponent == 63)
+				return 0.0;
+			return ldexp(1.f + static_cast<float>(mantise)/static_cast<float>(1<<10), exponent-63);
+		}
+	};
+	*/
 }
 
 namespace E2E
@@ -35,6 +55,7 @@ namespace E2E
 			readCVImage(stream, *image, CV_8UC1);
 		else // BScan
 			readCVImage(stream, *image, CV_16UC1);
+			// readConvertCVImage<ufloat16_t, float>(stream, *image);
 	}
 
 	Image::Image(cv::Mat* image, std::istream& stream, MDbData& data)
@@ -72,6 +93,31 @@ namespace E2E
 
 		stream.read(reinterpret_cast<char*>(image.data), pixelBytes);
 	}
+
+
+	template<typename Source, typename Dest>
+	void Image::readConvertCVImage(std::istream& stream, cv::Mat& image)
+	{
+		ImageHeader* head = reinterpret_cast<ImageHeader*>(header);
+		StreamHelper::readFStream(stream, head);
+
+		image = cv::Mat(head->breite, head->hoehe, cv::DataType<Dest>::type);
+
+		std::size_t sizeField = head->breite *head->hoehe;
+		std::unique_ptr<Source> tempImage(new Source[sizeField]);  // p1 owns Foo
+
+		Dest*   imgIt  = image.ptr<Dest>();
+		Source* tempIt = tempImage.get();
+		StreamHelper::readFStream(stream, tempIt, sizeField);
+
+		for(std::size_t i = 0; i<sizeField; ++i)
+		{
+			*imgIt = static_cast<Dest>(*tempIt);
+			++imgIt;
+			++tempIt;
+		}
+	}
+
 
 	Image* Image::fromJFIF(std::istream& stream, MDbData& data)
 	{
