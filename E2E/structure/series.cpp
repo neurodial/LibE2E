@@ -54,6 +54,21 @@ namespace E2E
 		sloDataElement = data;
 	}
 
+	void Series::takeExaminedStructure(StringListElement* textEle)
+	{
+		if(examinedStructure)
+			throw "mutlible StudyID";
+		// delete studyUID;
+		examinedStructure = textEle;
+	}
+
+	void Series::takeScanPattern(StringListElement* textEle)
+	{
+		if(scanPattern)
+			throw "mutlible StudyID";
+		// delete studyUID;
+		scanPattern = textEle;
+	}
 
 
 }

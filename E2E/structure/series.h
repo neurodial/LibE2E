@@ -19,7 +19,9 @@ namespace E2E
 		Image* sloImage = nullptr;
 		std::vector<Image*> pixmaps;
 		
-		TextElement*        seriesUID  = nullptr;
+		TextElement*        seriesUID          = nullptr;
+		StringListElement*  examinedStructure  = nullptr;
+		StringListElement*  scanPattern        = nullptr;
 
 		BScansMetaDataElement* metaDataElement = nullptr;
 		SloDataElement*        sloDataElement  = nullptr;
@@ -40,13 +42,19 @@ namespace E2E
 		const std::vector<Image*>& getPixmaps() const           { return pixmaps; }
 		void takePixmap(Image* img)                             { pixmaps.push_back(img); }
 		
-		const BScansMetaDataElement* getBScanMetaData() const    { return metaDataElement; }
+		const BScansMetaDataElement* getBScanMetaData() const          { return metaDataElement; }
 		void takeBScansMetaData(BScansMetaDataElement* ele);
 		
-		TextElement* getSeriesUID() const                        { return seriesUID; }
+		TextElement* getSeriesUID() const                              { return seriesUID; }
 		void takeSeriesUID(TextElement* uid);
 
-		SloDataElement* getSloDataElement() const                { return sloDataElement; }
+		StringListElement* getExaminedStructure() const                { return examinedStructure; }
+		void takeExaminedStructure(StringListElement* textEle);
+
+		StringListElement* getScanPattern() const                      { return scanPattern; }
+		void takeScanPattern(StringListElement* textEle);
+
+		SloDataElement* getSloDataElement() const                      { return sloDataElement; }
 		void takeSloDataElement(SloDataElement* data);
 	};
 

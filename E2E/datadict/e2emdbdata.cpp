@@ -295,16 +295,53 @@ namespace E2E
 					rawData = false;
 					break;
 				case 0x232d:
-					// std::cout << "Retina?";
-					DEBUG_OUT("Retina");
-					addUnknowStringList2Structure(stream);
-					rawData = false;
+					// std::cout << "OCT ART Volume?";
+					DEBUG_OUT("ExaminedStructure");
+
+					try
+					{
+						StringListElement* textEle = new StringListElement(stream, *this);
+						try
+						{
+							if(getDataClass() == DataClass::Series)
+								getSeries().takeExaminedStructure(textEle);
+							else
+								addUnknowStringList2Structure(textEle);
+						}
+						catch(...)
+						{
+							std::cerr << "ExaminedStructure can't set\n";
+							addUnknowStringList2Structure(textEle);
+						}
+						rawData = false;
+					}
+					catch(...)
+					{
+					}
 					break;
 				case 0x232e:
-					// std::cout << "OCT ART Volume?";
-					DEBUG_OUT("OCT ART Volume");
-					addUnknowStringList2Structure(stream);
-					rawData = false;
+					DEBUG_OUT("ScanPattern");
+					try
+					{
+						StringListElement* textEle = new StringListElement(stream, *this);
+						try
+						{
+							if(getDataClass() == DataClass::Series)
+								getSeries().takeScanPattern(textEle);
+							else
+								addUnknowStringList2Structure(textEle);
+						}
+						catch(...)
+						{
+							std::cerr << "ScanPattern can't set\n";
+							addUnknowStringList2Structure(textEle);
+						}
+						rawData = false;
+					}
+					catch(...)
+					{
+					}
+					break;
 					break;
 				case 0x232f:
 					// std::cout << "Infra-Red     IR?";
@@ -474,8 +511,11 @@ namespace E2E
 			MDbData::addUnknow2Structure(stream);
 			return false;
 		}
+		return addUnknowStringList2Structure(baseElement);
+	}
 
-
+	bool MDbData::addUnknowStringList2Structure(StringListElement* baseElement)
+	{
 		switch(getDataClass())
 		{
 			case DataClass::General:

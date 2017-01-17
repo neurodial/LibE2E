@@ -14,6 +14,8 @@ namespace E2E
 	class BScan;
 	class Study;
 
+	class StringListElement;
+
 	class DictEntryRawData;
 
 	class MDbData
@@ -24,9 +26,10 @@ namespace E2E
 
 		void addUnknow2Structure(std::ifstream& stream);
 		bool addUnknowStringList2Structure(std::ifstream& stream);
+		bool addUnknowStringList2Structure(StringListElement* baseElement);
 
 		const Options& options;
-		enum class DataClass { General, Patient, Study, Series, Image  };
+		enum class DataClass { General, Patient, Study, Series, Image };
 
 		MDbData(const E2E::Options& options, std::ifstream& stream, E2E::DataRoot& e2edata, const E2E::DictEntryRawData& mdbDirEntry);
 		~MDbData();

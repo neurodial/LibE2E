@@ -22,6 +22,8 @@ namespace E2E
 
 		StringList::const_iterator begin() const                 { return stringList.begin(); }
 		StringList::const_iterator end()   const                 { return stringList.end()  ; }
+
+		std::size_t                size()  const                 { return stringList.size() ; }
 		
 	private:
 		StringList stringList;
