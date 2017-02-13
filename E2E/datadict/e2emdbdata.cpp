@@ -7,8 +7,8 @@
 
 #include "../structure/root.h"
 
-//#define DEBUG_OUT(A) std::cout << A;
- #define DEBUG_OUT(A) ;
+// #define DEBUG_OUT(A) std::cout << A;
+#define DEBUG_OUT(A) ;
 
 #include "../streamhelper.h"
 #include "../dataelements/baseelement.h"
@@ -59,7 +59,7 @@ namespace E2E
 
 
 		dictRawData = new DictEntryRawData(stream, stream.tellg(), DictEntryRawData::EntryType::Data); // TODO: move tellg to DictEntryRawData class? complexity?
-		// const DictEntryRawData::Raw& data = dictRawData->getRaw();
+// 		const DictEntryRawData::Raw& data = dictRawData->getRaw();
 
 		// DEBUG_OUT(mdbDirEntry.validChecksum() << '\t' << mdbDirEntry.validIndexEntry() << '\t');
 		// DEBUG_OUT(dictRawData->validChecksum() << '\t' << dictRawData->validIndexEntry() << '\t');
@@ -78,7 +78,6 @@ namespace E2E
 
 
 		DEBUG_OUT( static_cast<int>(getDataClass()) << ' ')
-
 
 		if(isValid(mdbDirEntry))
 		{

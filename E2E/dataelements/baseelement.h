@@ -25,6 +25,8 @@ namespace E2E
 
 		int         subID              = 0;
 
+		static const uint32_t checksumMagic = 0x12435687;
+
 	public:
 		BaseElement(std::istream& stream, MDbData& data);
 		virtual ~BaseElement();
@@ -41,6 +43,9 @@ namespace E2E
 
 		const DictEntryRawData* getDictEntry () const           { return dictEntry ; }
 		const DictEntryRawData* getDataHeader() const           { return dataHeader; }
+
+		static uint32_t calcDataCheckSum(const char* data, const std::size_t length);
+		uint32_t getRawDataChecksum()           const           { return calcDataCheckSum(rawData, length); }
 	};
 }
 

@@ -15,6 +15,7 @@ namespace E2E
 		TextElement*        studyUID  = nullptr;
 		StudyData*          studyData = nullptr;
 	public:
+		Study(E2EData* parent) : SubstructureTemplate(parent) {}
 		virtual ~Study();
 
 		      Series& getSeries(int seriesId)                   { return getAndInsert(seriesId)         ; }

@@ -12,12 +12,13 @@ namespace E2E
 	{
 	public:
 		enum class EntryType { Dir, Data};
+		PACKSTRUCT(
 		struct DataRawHeader
 		{
 			uint8_t  mdbdataStr[0x08]; // MDbData + \0
 			uint32_t zero1;
-			uint32_t undef;
-		};
+			uint32_t checksumDatafield;
+		});
 
 		PACKSTRUCT(
 		struct Raw

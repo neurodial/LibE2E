@@ -1,11 +1,16 @@
 cmake_minimum_required(VERSION 2.6)
 project(libe2e)
 
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_module/)
+
 find_package(Boost 1.40 COMPONENTS filesystem system REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(CppFramework REQUIRED)
+
 
 include_directories(${CMAKE_SOURCE_DIR}/)
 include_directories(${Boost_INCLUDE_DIRS})
+include_directories(${CppFramework_INCLUDE_DIRS})
 
 if(CMAKE_COMPILER_IS_GNUCXX)
 	set(compiler_flags_debug "-Wall -Wextra -Wunreachable-code -Werror -Wconversion")        ## -Weverything

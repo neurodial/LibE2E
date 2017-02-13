@@ -36,13 +36,11 @@ namespace E2E
 		{
 			DictEntryRawData set(stream, stream.tellg(), DictEntryRawData::EntryType::Dir);
 
-			// std::cout << set << std::endl;
+			if(!set.validIndexEntry())
+				break;
 
 			if(set.isValid())
 				index.push_back(set);
-
-			if(!set.validIndexEntry())
-				break;
 		};
 	}
 }

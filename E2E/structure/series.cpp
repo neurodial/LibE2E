@@ -8,12 +8,6 @@
 namespace E2E
 {
 
-	Series::Series()
-	{
-
-	}
-
-
 	Series::~Series()
 	{
 		delete sloImage;

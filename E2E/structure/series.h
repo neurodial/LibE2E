@@ -27,7 +27,7 @@ namespace E2E
 		SloDataElement*        sloDataElement  = nullptr;
 		// image
 	public:
-		Series();
+		Series(E2EData* parent) : SubstructureTemplate(parent) {}
 		virtual ~Series();
 
 		      BScan& getBScan(int bscanId)                      { return getAndInsert(bscanId)         ; }

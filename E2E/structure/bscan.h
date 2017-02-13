@@ -16,6 +16,8 @@ namespace E2E
 	class BScan : public BaseStructure
 	{
 	public:
+		BScan(E2EData* parent) : BaseStructure(parent) {}
+
 		struct SegPair
 		{
 			SegPair() = default;

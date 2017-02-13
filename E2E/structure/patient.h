@@ -1,7 +1,5 @@
 #pragma once
 
-#include <map>
-
 #include "study.h"
 #include "substructure_template.h"
 
@@ -21,6 +19,7 @@ namespace E2E
 		PatImage_2335*      patImageL   = nullptr;
 		PatImage_2335*      patImageR   = nullptr;
 	public:
+		Patient(E2EData* parent) : SubstructureTemplate(parent) {}
 	    virtual ~Patient();
 
 		      Study& getStudy(int studyId)                      { return getAndInsert(studyId)         ; }

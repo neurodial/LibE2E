@@ -14,6 +14,8 @@ namespace E2E
 {
 
 	E2EData::E2EData()
+	: filesLoaded(0)
+	, dataRoot(this)
 	{
 
 	}
@@ -48,14 +50,14 @@ namespace E2E
 
 		const std::vector<DictEntryRawData>& vec = dir.getIndexVec();
 
-		double numEntries  = static_cast<double>(vec.size());
-		double countEntrie = 0;
+		CppFW::CallbackStepper dictCallbackStepper(&callb, vec.size());
 		for(const DictEntryRawData& dirEntry : vec)
 		{
 			MDbData::evaluate(stream, dataRoot, dirEntry, options);
-			callb.callback(countEntrie/numEntries);
-			countEntrie += 1.0;
+			++dictCallbackStepper;
 		}
+
+		++filesLoaded;
 
 		return true;
 	}

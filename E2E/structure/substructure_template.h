@@ -1,11 +1,13 @@
 #pragma once
 
 #include "basestructure.h"
+// #include "../e2edata.h"
 
 #include <map>
 
 namespace E2E
 {
+	class E2EData;
 
 	template<typename Type, typename IndexType = int>
 	class SubstructureTemplate : public BaseStructure
@@ -13,8 +15,6 @@ namespace E2E
 		SubstructureTemplate(const SubstructureTemplate&)            = delete;
 		SubstructureTemplate& operator=(const SubstructureTemplate&) = delete;
 	public:
-		SubstructureTemplate()                                       = default;
-		
 		typedef std::pair<const IndexType, Type*>        SubstructurePair;
 		typedef std::map<IndexType, Type*>               SubstructureMap;
 		typedef typename SubstructureMap::iterator       SubstructureIterator;
@@ -26,7 +26,11 @@ namespace E2E
 		SubstructureCIterator end()   const                     { return substructureMap.end();   }
 		std::size_t size()            const                     { return substructureMap.size();  }
 
+
 	protected:
+		SubstructureTemplate()                                       = default;
+		SubstructureTemplate(E2EData* parentData) : BaseStructure(parentData) {}
+
 		virtual ~SubstructureTemplate()
 		{
 			for(SubstructurePair obj : substructureMap)
@@ -38,14 +42,13 @@ namespace E2E
 			SubstructureIterator it = substructureMap.find(id);
 			if(it == substructureMap.end())
 			{
-				std::pair<SubstructureIterator, bool> pit = substructureMap.emplace(id, new Type);
+				std::pair<SubstructureIterator, bool> pit = substructureMap.emplace(id, new Type(getParentData()));
 				if(pit.second == false)
 					throw "SubstructureTemplate pit.second == false";
 				return *((pit.first)->second);
 			}
 			return *(it->second);
 		};
-
 
 		SubstructureMap substructureMap;
 	};

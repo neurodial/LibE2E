@@ -54,5 +54,23 @@ namespace E2E
 	}
 
 
+	uint32_t BaseElement::calcDataCheckSum(const char* data, const std::size_t length)
+	{
+		if(!data)
+			return 0;
+
+		uint32_t checksum = 0;
+		for(std::size_t i=0; i<length; ++i)
+		{
+			checksum += *reinterpret_cast<const uint8_t*>(data);
+// 			checksum += static_cast<uint32_t>(*data)<<8;
+			++data;
+		}
+
+		return checksum + checksumMagic;
+	}
+
+
+
 
 }
