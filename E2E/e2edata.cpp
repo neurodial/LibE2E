@@ -7,6 +7,8 @@
 #include "datadict/e2emdbdata.h"
 #include "streamhelper.h"
 
+#include <cpp_framework/callback.h>
+
 
 namespace E2E
 {
@@ -19,7 +21,7 @@ namespace E2E
 
 
 
-	bool E2EData::readE2EFile(const std::string& filename)
+	bool E2EData::readE2EFile(const std::string& filename, CppFW::Callback* callback)
 	{
 		std::ifstream stream(filename, std::ios::binary | std::ios::in);
 
@@ -32,17 +34,30 @@ namespace E2E
 			return false;
 
 
+
 		MDbDir dir;
 
 		dir.readIndex(stream, 0x4c);
 
+		CppFW::Callback callb;
+		if(callback)
+		{
+			callback->callback(0.1);
+			callb = callback->createSubTask(0.9, 0.1);
+		}
+
 		const std::vector<DictEntryRawData>& vec = dir.getIndexVec();
 
+		double numEntries  = static_cast<double>(vec.size());
+		double countEntrie = 0;
 		for(const DictEntryRawData& dirEntry : vec)
+		{
 			MDbData::evaluate(stream, dataRoot, dirEntry, options);
+			callb.callback(countEntrie/numEntries);
+			countEntrie += 1.0;
+		}
 
 		return true;
 	}
-
 
 }

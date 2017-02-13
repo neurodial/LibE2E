@@ -4,6 +4,8 @@
 
 #include "structure/root.h"
 
+namespace CppFW { class Callback; }
+
 namespace E2E
 {
 	struct Options
@@ -20,7 +22,7 @@ namespace E2E
 	public:
 		E2EData();
 		
-		bool readE2EFile(const std::string& filename);
+		bool readE2EFile(const std::string& filename, CppFW::Callback* callback = nullptr);
 
 		const DataRoot& getDataRoot() const                     { return dataRoot; }
 
@@ -29,6 +31,3 @@ namespace E2E
 
 
 }
-
-
-
