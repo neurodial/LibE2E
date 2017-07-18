@@ -1,7 +1,8 @@
 #ifndef E2EMDBDATA_H
 #define E2EMDBDATA_H
 
-#include <fstream>
+#include<fstream>
+#include<cassert>
 
 namespace E2E
 {
@@ -29,7 +30,6 @@ namespace E2E
 		bool addUnknowStringList2Structure(StringListElement* baseElement);
 
 		const Options& options;
-		enum class DataClass { General, Patient, Study, Series, Image };
 
 		MDbData(const E2E::Options& options, std::ifstream& stream, E2E::DataRoot& e2edata, const E2E::DictEntryRawData& mdbDirEntry);
 		~MDbData();
@@ -42,8 +42,12 @@ namespace E2E
 		Series &  getSeries ();
 		BScan  &  getBScan  ();
 
+		void validOrThrow(std::ifstream& stream);
+		void readDictRawData(std::ifstream& stream);
 
 	public:
+		enum class DataClass { General, Patient, Study, Series, Image };
+
 		static bool evaluate(std::ifstream& stream, E2E::DataRoot& e2edata, const E2E::DictEntryRawData& mdbDirEntry, const E2E::Options& options);
 
 		std::size_t getDataLength() const;
@@ -59,7 +63,7 @@ namespace E2E
 		int getPatientId()  const;
 
 		const E2E::DictEntryRawData& getDirEntry()               { return mdbDirEntry; }
-		const E2E::DictEntryRawData& getDataHeader()             { return *dictRawData; }
+		const E2E::DictEntryRawData& getDataHeader()             { assert(dictRawData); return *dictRawData; }
 
 		const Options& getOptions() const                        { return options; }
 	};
