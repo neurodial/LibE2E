@@ -101,7 +101,10 @@ namespace E2E
 									getSeries().takeSloImage(image);
 									break;
 								case DataClass::Image:
-									getBScan().takeImage(image);
+									if(options.readBScanImages)
+										getBScan().takeImage(image);
+									else
+										delete image;
 									break;
 								default:
 									delete image;

@@ -10,8 +10,9 @@ namespace E2E
 {
 	struct Options
 	{
-		bool readThumbnails = false;
-		bool readRawData    = false;
+		bool readThumbnails  = false;
+		bool readRawData     = false;
+		bool readBScanImages = true ;
 	};
 
 	class E2EData
