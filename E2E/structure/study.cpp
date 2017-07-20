@@ -20,6 +20,14 @@ namespace E2E
 		studyUID = uid;
 	}
 
+	void Study::takeStudyName(StringListElement* uid)
+	{
+		if(studyName)
+			throw "mutlible StudyName";
+		// delete studyUID;
+		studyName = uid;
+	}
+
 	void Study::takeStudyData(StudyData* data)
 	{
 		if(studyData)

@@ -8,6 +8,12 @@
 
 namespace E2E
 {
+	BaseElement::BaseElement(std::istream& stream, E2E::MDbData& data, const std::string& name)
+	: BaseElement(stream, data)
+	{
+		this->name = name;
+	}
+
 
 	E2E::BaseElement::BaseElement(std::istream& stream, E2E::MDbData& data)
 	{

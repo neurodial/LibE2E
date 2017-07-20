@@ -38,7 +38,7 @@ namespace
 		uint32_t unknown6[6];
 		uint32_t numAve;
 		uint32_t unknown7[8];
-		float    imageQuality;
+		float    imageQuality;  // 9c
 	});
 
 	void copyBScansData(const MetaDataStruct& mds, E2E::BScanMetaDataElement::BScanData& bsd)

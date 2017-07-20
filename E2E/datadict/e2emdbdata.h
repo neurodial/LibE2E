@@ -25,7 +25,7 @@ namespace E2E
 		const DictEntryRawData&              mdbDirEntry;
 		E2E::DataRoot&                       e2edata;
 
-		void addUnknow2Structure(std::ifstream& stream);
+		void addUnknow2Structure(std::ifstream& stream, const std::string& name);
 		bool addUnknowStringList2Structure(std::ifstream& stream);
 		bool addUnknowStringList2Structure(StringListElement* baseElement);
 

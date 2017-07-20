@@ -27,8 +27,10 @@ namespace E2E
 
 		static const uint32_t checksumMagic = 0x12435687;
 
+		std::string name;
 	public:
 		BaseElement(std::istream& stream, MDbData& data);
+		BaseElement(std::istream& stream, MDbData& data, const std::string& name);
 		virtual ~BaseElement();
 
 		std::size_t getRawDataLength() const                    { return rawDataLength; }
@@ -46,6 +48,8 @@ namespace E2E
 
 		static uint32_t calcDataCheckSum(const char* data, const std::size_t length);
 		uint32_t getRawDataChecksum()           const           { return calcDataCheckSum(rawData, length); }
+
+		const std::string& getName()            const           { return name; }
 	};
 }
 

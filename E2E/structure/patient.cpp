@@ -64,4 +64,10 @@ namespace E2E
 		diagnose = diag;
 	}
 
+	void Patient::takeAncestry(StringListElement* anc)
+	{
+		if(ancestry)
+			throw "multible ancestry";
+		ancestry = anc;
+	}
 }

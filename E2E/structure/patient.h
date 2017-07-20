@@ -18,6 +18,9 @@ namespace E2E
 
 		PatImage_2335*      patImageL   = nullptr;
 		PatImage_2335*      patImageR   = nullptr;
+
+
+		StringListElement*  ancestry    = nullptr;
 	public:
 		Patient(E2EData* parent) : SubstructureTemplate(parent) {}
 	    virtual ~Patient();
@@ -40,6 +43,10 @@ namespace E2E
 
 		TextElement16* getDiagnose() const                        { return diagnose; }
 		void takeDiagnose(TextElement16* diag);
+
+		StringListElement* getAncestry() const                        { return ancestry; }
+		void takeAncestry(StringListElement* anc);
+
 	};
 
 

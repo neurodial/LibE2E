@@ -13,6 +13,7 @@ namespace E2E
 	class Study : public SubstructureTemplate<Series>
 	{
 		TextElement*        studyUID  = nullptr;
+		StringListElement*  studyName = nullptr;
 		StudyData*          studyData = nullptr;
 	public:
 		Study(E2EData* parent) : SubstructureTemplate(parent) {}
@@ -24,9 +25,11 @@ namespace E2E
 		std::size_t getCScanSize() const                        { return substructureMap.size(); }
 		
 		
-		TextElement* getStudyUID() const                        { return studyUID; }
-		StudyData*   getStudyData() const                       { return studyData; }
+		TextElement      * getStudyUID() const                  { return studyUID; }
+		StringListElement* getStudyName() const                 { return studyName; }
+		StudyData        * getStudyData() const                 { return studyData; }
 		void takeStudyUID(TextElement* uid);
+		void takeStudyName(StringListElement* name);
 		void takeStudyData(StudyData* data);
 	};
 

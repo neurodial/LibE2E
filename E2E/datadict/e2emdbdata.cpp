@@ -88,6 +88,8 @@ namespace E2E
 
 		DEBUG_OUT( static_cast<int>(getDataClass()) << ' ')
 
+		std::string elementname;
+
 		bool rawData = true;
 		switch(mdbDirEntry.getRaw().type)
 		{
@@ -158,6 +160,10 @@ namespace E2E
 				}
 				break;
 			}
+			case 0x07:
+				DEBUG_OUT("Eye Data");
+				elementname = "Eye Data";
+				break;
 			case 0x09: // Patientendaten : Name, ID
 				{
 					validOrThrow(stream);
@@ -296,16 +302,35 @@ namespace E2E
 			case 0xe8:
 				// std::cout << "UUID?";
 				DEBUG_OUT("UUID");
+				elementname = "UUID";
 				break;
 			case 0xe9:
 				DEBUG_OUT("Unbekannte ID");
+				elementname = "Unbekannte ID";
 				break;
 			case 0x2328:
-				// std::cout << "Gerätename?";
-				DEBUG_OUT("PTC?");
+				DEBUG_OUT("Study Name");
 				validOrThrow(stream);
-				addUnknowStringList2Structure(stream);
-				rawData = false;
+				try
+				{
+					StringListElement* textEle = new StringListElement(stream, *this);
+					try
+					{
+						if(getDataClass() == DataClass::Study)
+							getStudy().takeStudyName(textEle);
+						else
+							addUnknowStringList2Structure(textEle);
+					}
+					catch(...)
+					{
+						std::cerr << "Study Name can't set\n";
+						addUnknowStringList2Structure(textEle);
+					}
+					rawData = false;
+				}
+				catch(...)
+				{
+				}
 				break;
 			case 0x2329:
 				// std::cout << "Gerätename?";
@@ -379,6 +404,30 @@ namespace E2E
 
 				addUnknowStringList2Structure(stream);
 				rawData = false;
+				break;
+			case 0x2334:
+				DEBUG_OUT("ancestry");
+				validOrThrow(stream);
+				try
+				{
+					StringListElement* textEle = new StringListElement(stream, *this);
+					try
+					{
+						if(getDataClass() == DataClass::Patient)
+							getPatient().takeAncestry(textEle);
+						else
+							addUnknowStringList2Structure(textEle);
+					}
+					catch(...)
+					{
+						std::cerr << "Ancestry can't set\n";
+						addUnknowStringList2Structure(textEle);
+					}
+					rawData = false;
+				}
+				catch(...)
+				{
+				}
 				break;
 			case 0x2335:
 				validOrThrow(stream);
@@ -488,7 +537,7 @@ namespace E2E
 		if(rawData && options.readRawData)
 		{
 			validOrThrow(stream);
-			addUnknow2Structure(stream);
+			addUnknow2Structure(stream, elementname);
 		}
 
 		DEBUG_OUT(std::endl)
@@ -516,9 +565,9 @@ namespace E2E
 		}
 	}
 
-	void MDbData::addUnknow2Structure(std::ifstream& stream)
+	void MDbData::addUnknow2Structure(std::ifstream& stream, const std::string& name)
 	{
-		BaseElement* baseElement = new BaseElement(stream, *this);
+		BaseElement* baseElement = new BaseElement(stream, *this, name);
 
 
 		switch(getDataClass())
@@ -550,7 +599,7 @@ namespace E2E
 		}
 		catch(...)
 		{
-			MDbData::addUnknow2Structure(stream);
+			MDbData::addUnknow2Structure(stream, "StringError");
 			return false;
 		}
 		return addUnknowStringList2Structure(baseElement);
