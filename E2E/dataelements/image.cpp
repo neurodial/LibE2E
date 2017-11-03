@@ -3,13 +3,17 @@
 // #include <ostream>
 
 #include <opencv/cv.h>
-#include <opencv/highgui.h>
+// #include <opencv/highgui.h>
+#include <opencv2/imgcodecs.hpp>
 
 #include "../streamhelper.h"
 #include "../datadict/e2emdbdata.h"
 #include "../datadict/dictentryrawdata.h"
 
 #include "../e2e_packhelper.h"
+
+#include<iostream>
+#include<memory>
 
 namespace
 {
@@ -130,7 +134,7 @@ namespace E2E
 		stream.read(reinterpret_cast<char*>(inputArray.data), readLengt);
 
 		cv::Mat* image = new cv::Mat;
-		*image = cv::imdecode(inputArray, CV_LOAD_IMAGE_ANYDEPTH);
+		*image = cv::imdecode(inputArray, cv::IMREAD_ANYDEPTH);
 		return new Image(image, stream, data);
 	}
 

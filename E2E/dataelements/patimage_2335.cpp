@@ -9,6 +9,8 @@
 
 #include "../e2e_packhelper.h"
 
+#include<iostream>
+
 namespace
 {
 	PACKSTRUCT(struct ImageHeader
