@@ -5,6 +5,7 @@
 #include "../datadict/e2emdbdata.h"
 
 #include <iostream>
+#include <algorithm>
 
 #include "../e2e_packhelper.h"
 
