@@ -60,7 +60,6 @@ namespace E2E
 	{
 		ImageHeader* head = reinterpret_cast<ImageHeader*>(header);
 		StreamHelper::readFStream(stream, head);
-		std::cout << "Type: " << head->type << std::endl;
 
 		switch(head->type)
 		{
