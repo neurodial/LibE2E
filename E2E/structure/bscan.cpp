@@ -32,6 +32,14 @@ namespace E2E
 		bscanImage = image;
 	}
 
+	void BScan::takeAngioImage(Image* image)
+	{
+		if(angioImage)
+			throw "double BScan-Angio-Image";
+		angioImage = image;
+	}
+
+
 	void BScan::takeSegmentationData(SegmentationData* data)
 	{
 		segmentationMap.emplace(SegPair(data->getSegIndex(), data->getSegType()), data);

@@ -43,6 +43,9 @@ namespace E2E
 		const Image* getImage() const                           { return bscanImage; }
 		void takeImage(Image* image);
 
+		const Image* getAngioImage() const                      { return angioImage; }
+		void takeAngioImage(Image* image);
+
 		const std::vector<Image*>& getPixmaps() const           { return pixmaps; }
 		void takePixmap(Image* img)                             { pixmaps.push_back(img); }
 
@@ -62,6 +65,7 @@ namespace E2E
 		void takeImageRegistrationData(ImageRegistration* ele);
 	private:
 		Image* bscanImage = nullptr;
+		Image* angioImage = nullptr;
 		std::vector<Image*> pixmaps;
 		
 		SegmentationMap segmentationMap;

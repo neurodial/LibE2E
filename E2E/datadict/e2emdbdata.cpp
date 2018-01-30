@@ -136,6 +136,35 @@ namespace E2E
 
 				break;
 			}
+			case 0x4000275d:
+			{
+				DEBUG_OUT("Angio Bild");
+				if(options.readBScanImages)
+				{
+					Image* image = nullptr;
+					validOrThrow(stream);
+					try
+					{
+						image = new Image(stream, *this);
+						rawData = false;
+						getBScan().takeAngioImage(image);
+					}
+					catch(const char* c)
+					{
+						rawData = true;
+						std::cerr << c;
+						delete image;
+					}
+					catch(...)
+					{
+						rawData = true;
+						std::cerr << "image: unexpected exception";
+						delete image;
+					}
+				}
+
+				break;
+			}
 			case 0x02: // Vorschaubild JFIF
 			{
 				DEBUG_OUT("Vorschaubild JFIF");

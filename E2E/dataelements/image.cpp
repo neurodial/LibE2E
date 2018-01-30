@@ -3,8 +3,8 @@
 // #include <ostream>
 
 #include <opencv/cv.h>
-// #include <opencv/highgui.h>
-#include <opencv2/imgcodecs.hpp>
+#include <opencv/highgui.h>
+// #include <opencv2/imgcodecs.hpp>
 
 #include "../streamhelper.h"
 #include "../datadict/e2emdbdata.h"
@@ -20,8 +20,11 @@ namespace
 	PACKSTRUCT(struct ImageHeader
 	{
 		uint8_t  undef[0x40 - E2E::DictEntryRawData::dataEntryHeaderSize];
-		uint32_t u1;
-		uint32_t u2;
+		uint8_t  u1;
+		uint8_t  u2;
+		uint8_t  type;
+		uint8_t  u4;
+		uint32_t u5;
 		uint32_t breite;
 		uint32_t hoehe;
 	});
@@ -55,11 +58,26 @@ namespace E2E
 	, header(new ImageHeader)
 	, image (new cv::Mat)
 	{
-		if(data.getSubId() == 0) // SLO
-			readCVImage(stream, *image, CV_8UC1);
-		else // BScan
-			readCVImage(stream, *image, CV_16UC1);
-			// readConvertCVImage<ufloat16_t, float>(stream, *image);
+		ImageHeader* head = reinterpret_cast<ImageHeader*>(header);
+		StreamHelper::readFStream(stream, head);
+		std::cout << "Type: " << head->type << std::endl;
+
+		switch(head->type)
+		{
+			case 1:
+				readCVImage(stream, *image, CV_8UC1);
+				break;
+			case 32:
+				readCVImage(stream, *image, CV_16UC1);
+				break;
+			default:
+				if(data.getSubId() == 0) // SLO
+					readCVImage(stream, *image, CV_8UC1);
+				else // BScan
+					readCVImage(stream, *image, CV_16UC1);
+					// readConvertCVImage<ufloat16_t, float>(stream, *image);
+		}
+
 	}
 
 	Image::Image(cv::Mat* image, std::istream& stream, MDbData& data)
@@ -81,7 +99,6 @@ namespace E2E
 	void Image::readCVImage(std::istream& stream, cv::Mat& image, int cvFormat)
 	{
 		ImageHeader* head = reinterpret_cast<ImageHeader*>(header);
-		StreamHelper::readFStream(stream, head);
 
 		image = cv::Mat(head->breite, head->hoehe, cvFormat);
 
@@ -103,7 +120,6 @@ namespace E2E
 	void Image::readConvertCVImage(std::istream& stream, cv::Mat& image)
 	{
 		ImageHeader* head = reinterpret_cast<ImageHeader*>(header);
-		StreamHelper::readFStream(stream, head);
 
 		image = cv::Mat(head->breite, head->hoehe, cv::DataType<Dest>::type);
 
