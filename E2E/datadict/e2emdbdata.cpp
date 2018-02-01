@@ -18,6 +18,7 @@
 #include "../dataelements/patientdataelement.h"
 #include "../dataelements/textelement.h"
 #include "../dataelements/textelement16.h"
+#include "../dataelements/eyedata.h"
 #include "../dataelements/bscansmetadataelement.h"
 #include <E2E/dataelements/bscanmetadataelement.h>
 #include <E2E/dataelements/imageregistration.h>
@@ -190,14 +191,33 @@ namespace E2E
 				break;
 			}
 			case 0x07:
-				DEBUG_OUT("Eye Data");
-				elementname = "Eye Data";
+				{
+					validOrThrow(stream);
+					DEBUG_OUT("Eye Data");
+					elementname = "Eye Data";
+					EyeData* eyeData = nullptr;
+					try
+					{
+						eyeData = new EyeData(stream, *this);
+						getStudy().takeEyeData(eyeData);
+						rawData = false;
+					}
+					catch(const char* str)
+					{
+						std::cerr << "eyeData can't set: " << str << '\n';
+					}
+					catch(...)
+					{
+						std::cerr << "eyeData can't set\n";
+						delete eyeData;
+					}
+				}
 				break;
 			case 0x09: // Patientendaten : Name, ID
 				{
 					validOrThrow(stream);
 					DEBUG_OUT("Patientendaten : Name, ID");
-					PatientDataElement* patientData;
+					PatientDataElement* patientData = nullptr;
 					try
 					{
 						patientData = new PatientDataElement(stream, *this);

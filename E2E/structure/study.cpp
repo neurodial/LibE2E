@@ -3,6 +3,7 @@
 
 #include "../dataelements/textelement.h"
 #include "../dataelements/studydata.h"
+#include "../dataelements/eyedata.h"
 
 namespace E2E
 {
@@ -36,5 +37,32 @@ namespace E2E
 		studyData = data;
 
 	}
+
+	void Study::takeEyeData(EyeData* source, EyeData*& dest)
+	{
+		if(dest)
+			throw "mutlible eye data";
+		dest = source;
+	}
+
+
+
+	void Study::takeEyeData(E2E::EyeData* eyedata)
+	{
+		if(!eyedata)
+			return;
+		switch(eyedata->getEyeSide())
+		{
+			case 'L':
+				takeEyeData(eyedata, eyeDataL);
+				break;
+			case 'R':
+				takeEyeData(eyedata, eyeDataR);
+				break;
+			default:
+				throw("undef eye side");
+		}
+	}
+
 
 }
