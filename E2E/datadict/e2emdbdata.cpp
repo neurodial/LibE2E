@@ -205,6 +205,7 @@ namespace E2E
 					catch(const char* str)
 					{
 						std::cerr << "eyeData can't set: " << str << '\n';
+						delete eyeData;
 					}
 					catch(...)
 					{
@@ -594,7 +595,6 @@ namespace E2E
 
 	MDbData::~MDbData()
 	{
-		delete dictRawData;
 	}
 
 
@@ -610,7 +610,8 @@ namespace E2E
 		if(!dictRawData)
 		{
 			stream.seekg(mdbDirEntry.getRaw().dataAddress);
-			dictRawData = new DictEntryRawData(stream, mdbDirEntry.getRaw().dataAddress, DictEntryRawData::EntryType::Data);
+			dictRawData = std::unique_ptr<DictEntryRawData>(new DictEntryRawData(stream, mdbDirEntry.getRaw().dataAddress, DictEntryRawData::EntryType::Data));
+// 			dictRawData = std::make_unique<DictEntryRawData>(stream, mdbDirEntry.getRaw().dataAddress, DictEntryRawData::EntryType::Data); // C++14
 		}
 	}
 

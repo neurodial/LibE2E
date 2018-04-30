@@ -3,8 +3,8 @@
 // #include <ostream>
 
 #include <opencv/cv.h>
-// #include <opencv/highgui.h>
-#include <opencv2/imgcodecs.hpp>
+#include <opencv/highgui.h>
+// #include <opencv2/imgcodecs.hpp>
 
 #include "../streamhelper.h"
 #include "../datadict/e2emdbdata.h"
@@ -28,26 +28,6 @@ namespace
 		uint32_t breite;
 		uint32_t hoehe;
 	});
-
-/*
-	class ufloat16_t
-	{
-		uint16_t value;
-	public:
-		ufloat16_t(uint16_t v = 0) : value(v) {}
-		operator float() const
-		{
-			const uint16_t mantise_mask = (1<<10)-1;
-			const int mantise  =  value &  mantise_mask;
-			const int exponent = (value & ~mantise_mask) >> 10;
-			if(exponent == 0)
-				return ldexp(static_cast<float>(mantise)/static_cast<float>(1<<10), -62);
-			if(exponent == 63)
-				return 0.0;
-			return ldexp(1.f + static_cast<float>(mantise)/static_cast<float>(1<<10), exponent-63);
-		}
-	};
-	*/
 }
 
 namespace E2E

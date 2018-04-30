@@ -3,6 +3,7 @@
 #include "../dataelements/image.h"
 #include "../dataelements/textelement.h"
 #include "../dataelements/bscansmetadataelement.h"
+#include "../dataelements/slodataelement.h"
 
 
 namespace E2E
@@ -17,6 +18,9 @@ namespace E2E
 		
 		delete seriesUID;
 		delete metaDataElement;
+		delete examinedStructure;
+		delete scanPattern;
+		delete sloDataElement;
 	}
 
 

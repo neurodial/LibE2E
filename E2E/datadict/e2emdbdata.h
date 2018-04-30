@@ -3,6 +3,7 @@
 
 #include<fstream>
 #include<cassert>
+#include<memory>
 
 namespace E2E
 {
@@ -21,7 +22,8 @@ namespace E2E
 
 	class MDbData
 	{
-		DictEntryRawData*                    dictRawData = nullptr;
+// 		DictEntryRawData*                    dictRawData = nullptr;
+		std::unique_ptr<DictEntryRawData>    dictRawData;
 		const DictEntryRawData&              mdbDirEntry;
 		E2E::DataRoot&                       e2edata;
 

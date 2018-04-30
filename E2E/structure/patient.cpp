@@ -18,6 +18,7 @@ namespace E2E
 		delete patImageR;
 
 		delete diagnose;
+		delete ancestry;
 	}
 
 

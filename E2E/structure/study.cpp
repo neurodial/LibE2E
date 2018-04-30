@@ -11,6 +11,9 @@ namespace E2E
 	{
 		delete studyUID;
 		delete studyData;
+		delete eyeDataL;
+		delete eyeDataR;
+		delete studyName;
 	}
 
 	void Study::takeStudyUID(TextElement* uid)
