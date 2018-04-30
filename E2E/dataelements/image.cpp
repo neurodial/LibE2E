@@ -120,13 +120,13 @@ namespace E2E
 
 	Image* Image::fromJFIF(std::istream& stream, MDbData& data)
 	{
-		int         readLengt  = static_cast<int>(data.getDataLength()); // TODO
+		int         readLength = static_cast<int>(data.getDataLength()); // TODO
 		std::size_t readAdress = data.getDataAdress() + 60 + 0x10;
 
-		cv::Mat inputArray(readLengt, 1, CV_8UC1);
+		cv::Mat inputArray(readLength, 1, CV_8UC1);
 
 		stream.seekg(readAdress);
-		stream.read(reinterpret_cast<char*>(inputArray.data), readLengt);
+		stream.read(reinterpret_cast<char*>(inputArray.data), readLength);
 
 		cv::Mat* image = new cv::Mat;
 		*image = cv::imdecode(inputArray, cv::IMREAD_ANYDEPTH);
