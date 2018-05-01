@@ -45,22 +45,25 @@ namespace E2E
 
 		void print(std::ostream& stream) const;
 
-		bool validChecksum()                              const  { return (calculatedChecksum - rawdata.checksum) == 0; }
-		bool validIndexEntry()                            const;
-		bool isValid()                                    const  { return validIndexEntry() && validChecksum(); }
+		bool validChecksum()                                     const { return (calculatedChecksum - rawdata.checksum) == 0; }
+		bool validIndexEntry()                                   const;
+		bool isValid()                                           const { return validIndexEntry() && validChecksum(); }
 
-		std::size_t getFoundAddr()                        const  { return foundAddr; }
-		uint32_t getCalculatedChecksum()                  const  { return calculatedChecksum; }
+		std::size_t getFoundAddr()                               const { return foundAddr; }
+		uint32_t getCalculatedChecksum()                         const { return calculatedChecksum; }
 
-		const Raw& getRaw()                               const  { return rawdata; }
-		const DataRawHeader& getDataRawHeader()           const  { return dataRawHeader; }
+		const Raw& getRaw()                                      const { return rawdata; }
+		const DataRawHeader& getDataRawHeader()                  const { return dataRawHeader; }
+
+		std::size_t getEntryId()                                 const { return id; }
+		static void resetEntryCounter()                                { idCounter = 0; }
 
 		bool compare(const DictEntryRawData& other) const;
 
 		constexpr static const std::size_t dirEntryHeaderSize  = sizeof(Raw);
 		constexpr static const std::size_t dataEntryHeaderSize = sizeof(DataRawHeader) + sizeof(Raw);
 
-		EntryType getType() const                                { return type; }
+		EntryType getType() const                                      { return type; }
 
 	private:
 		Raw           rawdata           ;
@@ -68,6 +71,9 @@ namespace E2E
 		EntryType     type              ;
 		std::size_t   foundAddr         ;
 		uint32_t      calculatedChecksum;
+
+		std::size_t id;
+		static std::size_t idCounter;
 
 		void calcChecksumDir();
 		void calcChecksumData();

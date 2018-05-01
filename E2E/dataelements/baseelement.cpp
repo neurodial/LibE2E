@@ -77,6 +77,12 @@ namespace E2E
 	}
 
 
+	std::size_t BaseElement::getEntryID() const
+	{
+		if(dictEntry)
+			return dictEntry->getEntryId();
+		return 0;
+	}
 
 
 }

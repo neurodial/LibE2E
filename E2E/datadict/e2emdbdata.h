@@ -64,10 +64,10 @@ namespace E2E
 		int getStudyId()    const;
 		int getPatientId()  const;
 
-		const E2E::DictEntryRawData& getDirEntry()               { return mdbDirEntry; }
-		const E2E::DictEntryRawData& getDataHeader()             { assert(dictRawData); return *dictRawData; }
+		const E2E::DictEntryRawData& getDirEntry()               const { return mdbDirEntry; }
+		const E2E::DictEntryRawData& getDataHeader()             const { assert(dictRawData); return *dictRawData; }
 
-		const Options& getOptions() const                        { return options; }
+		const Options& getOptions()                              const { return options; }
 	};
 	
 };

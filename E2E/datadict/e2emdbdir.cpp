@@ -32,6 +32,7 @@ namespace E2E
 
 		// read all valid dataset
 
+		DictEntryRawData::resetEntryCounter();
 		while(true)
 		{
 			DictEntryRawData set(stream, stream.tellg(), DictEntryRawData::EntryType::Dir);

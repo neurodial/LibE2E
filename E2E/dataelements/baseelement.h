@@ -50,6 +50,8 @@ namespace E2E
 		uint32_t getRawDataChecksum()           const           { return calcDataCheckSum(rawData, length); }
 
 		const std::string& getName()            const           { return name; }
+
+		std::size_t getEntryID() const;
 	};
 }
 
